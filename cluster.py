@@ -1,5 +1,6 @@
 import random
 from math import sqrt
+from PIL import Image, ImageDraw
 
 
 def read_file(fname):
@@ -36,9 +37,18 @@ def tanimoto(v1, v2):
             c1 += 1
         if v2[i] != 0:
             c2 += 1
-        if v2[i] != 0 and v2[i] != 0:
+        if v1[i] != 0 and v2[i] != 0:
             shr += 1
-    return 1. - (shr/c1+c2-shr)
+    if (c1+c2-shr) == 0:
+        return 0
+    return 1. - (shr/(c1+c2-shr))
+
+def manhattan(v1, v2):
+    d = 0.
+    for i in range(len(v1)):
+        d += abs(v1[i] - v2[i])
+    return d
+
 
 def kcluster(rows, distance=pearson, k=4):
     r, c = len(rows), len(rows[0])
@@ -78,17 +88,75 @@ def kcluster(rows, distance=pearson, k=4):
                 avgs[m] /= len(best_matches[i])
             clusters[i] = avgs
 
-    return best_matches
+    dist = [0.]*k
+    for i in range(k):
+        n = len(best_matches[i])
+        for j in range(n):
+            for m in range(j+1, n):
+                dist[i] += distance(rows[best_matches[i][j]], rows[best_matches[i][m]])
+
+    return best_matches, dist, clusters
+
+def scale_down(data, distance=pearson, nd=2, rate=.01):
+
+    def euclidean(p1, p2):
+        return sqrt(sum([((p1[i]-p2[i])**2)
+            for i in range(nd)]))
+
+    n = len(data)
+    real_dist = [[distance(data[i], data[j])
+        for j in range(n)]
+        for i in range(n)]
+
+    loc = [[random.random() for _ in range(nd)] for _ in range(n)]
+
+    last_error = None
+    for m in range(10):
+        fake_dist = [[euclidean(loc[i], loc[j])
+            for j in range(n)]
+            for i in range(n)]
+
+        grad = [[0.]*nd for _ in range(n)]
+        total_error = 0
+        for i in range(n):
+            for j in range(n):
+                if i == j: continue
+                error_term = (fake_dist[i][j]-real_dist[i][j])/real_dist[i][j]
+                for k in range(nd):
+                    grad[i][k] += (loc[i][k]-loc[j][k]) / fake_dist[i][j] * error_term
+                total_error += abs(error_term)
+        print total_error
+        if last_error and last_error < total_error:
+            break
+        last_error = total_error
+
+        for i in range(n):
+            for k in range(nd):
+                loc[i][k] -= rate*grad[i][k]
+    return loc
+
+def draw2d(data, labels, fname, coding='PNG'):
+    img = Image.new('RGB', (2000,2000), (255,255,255))
+    draw = ImageDraw.Draw(img)
+    for i in range(len(data)):
+        x = (data[i][0] + .5) * 1000
+        y = (data[i][1] + .5) * 1000
+        draw.text((x,y), labels[i], (0,0,0))
+    img.save(fname, coding)
 
 
 def test_zebo():
     wants, people, data = read_file('data/zebo.txt')
+    loc = scale_down(data, tanimoto)
+    draw2d(loc, wants, 'zebo.png')
+    
 
 def test_blogs():
     blog_names, words, data = read_file('data/blogdata.txt')
-    print len(blog_names), len(words), len(data), len(data[0])
-    clust = kcluster(data, k=10)
+    clust, dist, center = kcluster(data, k=10)
+    print dist
+
 
 
 if __name__ == '__main__':
-    test_blogs()
+    test_zebo()
