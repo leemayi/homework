@@ -96,27 +96,84 @@ def hill_climb(domain, costf):
 def evaluate(domain, costf, optimizers, n=5):
     sols = []
     for optimizer in optimizers:
+        name = optimizer.__name__
+        print 'evaluating', name, '...'
         row = []
         for _ in range(n):
             start = time.time()
             sol = optimizer(domain, costf)
             time_cost = time.time() - start
             row.append((costf(sol), time_cost, sol))
-        sols.append((optimizer.__name__, row))
+        sols.append((name, row))
 
+    print 'for', n, 'times'
     for name, row in sols:
         costs = [i[0] for i in row]
         tcosts = [i[1] for i in row]
 
-        print '-'*4, name
+        print '-'*10, name
         print 'best:', min(costs)
         print 'time cost:', sum(tcosts)
         print 'worst:', max(costs)
 
 def annealing_optimize(domain, costf, T=10000., cool=0.95, step=1):
-    pass
+    vec = [random.randint(*d) for d in domain]
 
-        
+    while T>.1:
+        i = random.randint(0, len(domain)-1)
+        dir_ = random.randint(-step, step)
+        vecb = vec[:]
+        vecb[i] += dir_
+
+        low, high = domain[i]
+        if vecb[i] < low:
+            vecb[i] = low
+        elif vecb[i] > high:
+            vecb[i] = high
+
+        ea = costf(vec)
+        eb = costf(vecb)
+
+        if (eb < ea or random.random() < pow(math.e, -(eb-ea)/T)):
+            vec = vecb
+
+        T *= cool
+    return vec
+
+def genetic_optimize(domain, costf, popsize=50, step=1, mutprob=.2, elite=.2, maxiter=100):
+
+    def mutate(vec):
+        i = random.randint(0, len(domain)-1)
+        low, high = domain[i]
+        if vec[i] > low:
+            return vec[:i] + [vec[i]-step] + vec[i+1:]
+        elif vec[i] < high:
+            return vec[:i] + [vec[i]+step] + vec[i+1:]
+
+    def crossover(r1, r2):
+        i = random.randint(1, len(domain)-2)
+        return r1[:i] + r2[i:]
+
+    pop = [[random.randint(*d) for d in domain]
+        for _ in range(popsize)]
+    top = int(elite*popsize)
+
+    for i in range(maxiter):
+        scores = [(costf(v), v) for v in pop]
+        scores.sort()
+        ranked = [v for (s,v) in scores]
+
+        pop = ranked[:top]
+
+        while len(pop) < popsize:
+            if random.random() < mutprob:
+                c = random.randint(0, top-1)
+                pop.append(mutate(ranked[c]))
+            else:
+                c1 = random.randint(0, top-1)
+                c2 = random.randint(0, top-1)
+                pop.append(crossover(ranked[c1], ranked[c2]))
+    return scores[0][1]
 
 
 
@@ -125,5 +182,10 @@ if __name__ == '__main__':
     print schedule_cost(s)
 
     domain = [(0,9)]*(len(people)*2)
-    evaluate(domain, schedule_cost, [random_optimize, hill_climb])
+    evaluate(domain, schedule_cost,[
+        genetic_optimize,
+        annealing_optimize,
+        hill_climb,
+        random_optimize,
+        ], 3)
     
