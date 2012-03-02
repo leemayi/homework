@@ -12,13 +12,15 @@ people = [
 
 destination = 'LGA'
 
-flights = {}
-with open('data/schedule.txt') as f:
-    for line in f:
-        origin, dest, depart, arrive, price = line.rstrip().split(',')
-        flights.setdefault((origin, dest), [])
+def load():
+    flights = {}
+    with open('data/schedule.txt') as f:
+        for line in f:
+            origin, dest, depart, arrive, price = line.rstrip().split(',')
+            flights.setdefault((origin, dest), [])
 
-        flights[(origin, dest)].append((depart, arrive, int(price)))
+            flights[(origin, dest)].append((depart, arrive, int(price)))
+    return flights
 
 def get_minutes(t):
     x = time.strptime(t, '%H:%M')
@@ -149,6 +151,7 @@ def genetic_optimize(domain, costf, popsize=50, step=1, mutprob=.2, elite=.2, ma
             return vec[:i] + [vec[i]-step] + vec[i+1:]
         elif vec[i] < high:
             return vec[:i] + [vec[i]+step] + vec[i+1:]
+        return vec
 
     def crossover(r1, r2):
         i = random.randint(1, len(domain)-2)
@@ -159,7 +162,11 @@ def genetic_optimize(domain, costf, popsize=50, step=1, mutprob=.2, elite=.2, ma
     top = int(elite*popsize)
 
     for i in range(maxiter):
-        scores = [(costf(v), v) for v in pop]
+        try:
+            scores = [(costf(v), v) for v in pop]
+        except:
+            print pop
+            raise
         scores.sort()
         ranked = [v for (s,v) in scores]
 
@@ -173,11 +180,13 @@ def genetic_optimize(domain, costf, popsize=50, step=1, mutprob=.2, elite=.2, ma
                 c1 = random.randint(0, top-1)
                 c2 = random.randint(0, top-1)
                 pop.append(crossover(ranked[c1], ranked[c2]))
+        #print scores[0][0]
     return scores[0][1]
 
 
 
 if __name__ == '__main__':
+    flights = load()
     s = [1,4,3,2,7,3,6,3,2,4,5,3]
     print schedule_cost(s)
 
