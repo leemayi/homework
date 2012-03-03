@@ -1,3 +1,4 @@
+import sys
 import random
 import math
 
@@ -24,10 +25,10 @@ def print_solution(vec):
     for i in range(len(dorms)):
         slots += [i, i]
 
-    for i in range(len(vec)):
-        x = int(vec[i])
+    for i, (name, (pref1, pref2)) in enumerate(prefs):
+        x = vec[i]
         dorm = dorms[slots[x]]
-        print prefs[i][0], dorm
+        print name, dorm
         del slots[x]
 
 def dormcost(vec):
@@ -56,8 +57,12 @@ def dormcost(vec):
 if __name__ == '__main__':
     import optimization as opt
     s = opt.random_optimize(domain, dormcost)
+    print s
     print dormcost(s)
+    print_solution(s)
 
     s = opt.genetic_optimize(domain, dormcost)
+    print s
     print dormcost(s)
+    print_solution(s)
 
