@@ -18,6 +18,19 @@ prefs = [
     ('Neil',   (H, A)),
     ]
 
+ratings = [
+    [0, 5, 5, 3, 2, 5, 2, 2, 3, 5],
+    [4, 0, 1, 5, 1, 3, 1, 3, 5, 5],
+    [4, 3, 0, 1, 3, 5, 3, 1, 5, 4],
+    [5, 5, 5, 0, 4, 5, 4, 5, 1, 5],
+    [4, 5, 1, 3, 0, 2, 5, 4, 3, 3],
+    [5, 5, 1, 4, 1, 0, 4, 2, 2, 3],
+    [4, 1, 1, 1, 1, 2, 0, 5, 2, 5],
+    [5, 2, 3, 4, 3, 4, 5, 0, 4, 4],
+    [2, 2, 3, 1, 4, 5, 5, 4, 0, 1],
+    [4, 2, 5, 2, 3, 4, 1, 3, 2, 0]
+]
+
 domain = [(0,(len(dorms)*2)-i-1) for i in range(len(dorms)*2)]
 
 def print_solution(vec):
@@ -36,7 +49,7 @@ def dormcost(vec):
     slots = [0,0,1,1,2,2,3,3,4,4]
 
     for i in range(len(vec)):
-        x = int(vec[i])
+        x = vec[i]
         dorm = dorms[slots[x]]
         pref = prefs[i][1]
 
@@ -50,12 +63,30 @@ def dormcost(vec):
 
     return cost
 
+def dormcost2(vec, debug=False):
+    slots = [0,0,1,1,2,2,3,3,4,4]
+
+    occupy = {}
+    for i, x in enumerate(vec):
+        dorm = slots[x]
+        occupy.setdefault(dorm, [])
+        occupy[dorm].append(i)
+        del slots[x]
+
+    cost = 0
+    for dorm, (p1, p2) in occupy.items():
+        cost += 3-ratings[p1][p2]
+        cost += 3-ratings[p2][p1]
+        if debug:
+            print cost, dorms[dorm], prefs[p1][0], prefs[p2][0], ratings[p1][p2], ratings[p2][p1]
+    return cost
 
 
 
 
 if __name__ == '__main__':
     import optimization as opt
+    '''
     s = opt.random_optimize(domain, dormcost)
     print s
     print dormcost(s)
@@ -65,4 +96,9 @@ if __name__ == '__main__':
     print s
     print dormcost(s)
     print_solution(s)
+    '''
 
+    s = opt.genetic_optimize(domain, dormcost2)
+    print s
+    print dormcost2(s, 1)
+    print_solution(s)

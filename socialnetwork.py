@@ -48,6 +48,35 @@ def crosscount(v):
                 total += (1. - dist/min_)
             elif dist > max_:
                 total += (1. - max_/dist)
+
+
+    def cosv(v1, v2):
+        def dotp(v1, v2):
+            return v1[0]*v2[0] + v1[1]*v2[1]
+        def module(v):
+            return math.sqrt(v[0]**2 + v[1]**2)
+        try:
+            return dotp(v1, v2) / (module(v1) * module(v2))
+        except ZeroDivisionError:
+            return 1
+
+    def edgev(e):
+        def vector(p1, p2):
+            return p2[0]-p1[0], p2[1]-p1[1]
+        return vector(loc[e[0]], loc[e[1]])
+
+    small_angle = 90
+    threshold = math.cos(small_angle*math.pi/180)
+    for vertex, (x, y) in loc.items():
+        edges = [ ((from_, to) if from_ == vertex else (to, from_))
+             for from_, to in links if vertex in (from_, to) ]
+        for i in range(len(edges)):
+            for j in range(i+1, len(edges)):
+                e1, e2 = edges[i], edges[j]
+                cos = cosv(edgev(e1), edgev(e2))
+                if cos > threshold:
+                    total += (cos-threshold)*5
+
     return total
 
 def draw_network(sol):

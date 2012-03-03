@@ -142,6 +142,17 @@ def annealing_optimize(domain, costf, T=10000., cool=0.95, step=1):
         T *= cool
     return vec
 
+def select(rows, costf):
+    c = [ (costf(r), r, i) for i, r in enumerate(rows) ]
+    c.sort()
+    return c[0]
+
+def diff_anneal(domain, costf):
+    opts = (20000., 10000., 5000.,1000., 100., )
+    cost, r, idx = select([ annealing_optimize(domain, costf, T)
+        for T in opts], costf)
+    print cost, opts[idx], r
+
 def genetic_optimize(domain, costf, popsize=50, step=1, mutprob=.2, elite=.2, maxiter=100):
 
     def mutate(vec):
@@ -161,12 +172,8 @@ def genetic_optimize(domain, costf, popsize=50, step=1, mutprob=.2, elite=.2, ma
         for _ in range(popsize)]
     top = int(elite*popsize)
 
-    for i in range(maxiter):
-        try:
-            scores = [(costf(v), v) for v in pop]
-        except:
-            print pop
-            raise
+    for _ in range(maxiter):
+        scores = [(costf(v), v) for v in pop]
         scores.sort()
         ranked = [v for (s,v) in scores]
 
@@ -183,6 +190,51 @@ def genetic_optimize(domain, costf, popsize=50, step=1, mutprob=.2, elite=.2, ma
         #print scores[0][0]
     return scores[0][1]
 
+def genetic_optimize2(domain, costf, popsize=50, step=1, mutprob=.2, elite=.2, miniter=50):
+
+    def mutate(vec):
+        i = random.randint(0, len(domain)-1)
+        low, high = domain[i]
+        if vec[i] > low:
+            return vec[:i] + [vec[i]-step] + vec[i+1:]
+        elif vec[i] < high:
+            return vec[:i] + [vec[i]+step] + vec[i+1:]
+        return vec
+
+    def crossover(r1, r2):
+        i = random.randint(1, len(domain)-2)
+        return r1[:i] + r2[i:]
+
+    pop = [[random.randint(*d) for d in domain]
+        for _ in range(popsize)]
+    top = int(elite*popsize)
+
+    best, prebest = None, None
+    it = 0
+    while 1:
+        scores = [(costf(v), v) for v in pop]
+        scores.sort()
+        it += 1
+        prebest = best
+        if best is None:
+            best = scores[0]
+        elif best >= prebest and it >= miniter:
+            break
+
+        ranked = [v for (s,v) in scores]
+        pop = ranked[:top]
+
+        while len(pop) < popsize:
+            if random.random() < mutprob:
+                c = random.randint(0, top-1)
+                pop.append(mutate(ranked[c]))
+            else:
+                c1 = random.randint(0, top-1)
+                c2 = random.randint(0, top-1)
+                pop.append(crossover(ranked[c1], ranked[c2]))
+        #print scores[0][0]
+
+    return scores[0][1]
 
 def run(optimizer, domain, costf, n=3, *args, **kw):
     best, sol = None, None
@@ -195,16 +247,27 @@ def run(optimizer, domain, costf, n=3, *args, **kw):
     return best, sol
 
 
-if __name__ == '__main__':
-    flights = load()
+
+def main():
     s = [1,4,3,2,7,3,6,3,2,4,5,3]
     print schedule_cost(s)
 
-    domain = [(0,9)]*(len(people)*2)
     evaluate(domain, schedule_cost,[
         genetic_optimize,
         annealing_optimize,
         hill_climb,
         random_optimize,
         ], 3)
-    
+
+def main2():
+    diff_anneal(domain, schedule_cost)   
+
+
+if __name__ == '__main__':
+    flights = load()
+    domain = [(0,9)]*(len(people)*2)
+
+    evaluate(domain, schedule_cost, [
+        genetic_optimize,
+        genetic_optimize2,
+        ], 3)
