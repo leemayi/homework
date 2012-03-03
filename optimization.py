@@ -184,6 +184,16 @@ def genetic_optimize(domain, costf, popsize=50, step=1, mutprob=.2, elite=.2, ma
     return scores[0][1]
 
 
+def run(optimizer, domain, costf, n=3, *args, **kw):
+    best, sol = None, None
+    for _ in range(3):
+        r = optimizer(domain, costf, *args, **kw)
+        c = costf(r)
+        if c < best or best is None:
+            best = c
+            sol = r
+    return best, sol
+
 
 if __name__ == '__main__':
     flights = load()
