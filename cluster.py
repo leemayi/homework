@@ -1,10 +1,10 @@
+import sys
 import random
 from math import sqrt
-from PIL import Image, ImageDraw
 
 
-def read_file(fname):
-    with open(fname) as f:
+def read_file(fname=sys.stdin):
+    def func(f):
         header = f.readline()
         col_names = header.rstrip().split('\t')[1:]
 
@@ -13,7 +13,13 @@ def read_file(fname):
             cols = line.rstrip().split('\t')
             row_names.append(cols[0])
             data.append([float(x) for x in cols[1:]])
-    return row_names, col_names, data
+        return row_names, col_names, data
+
+    if isinstance(fname, file):
+        return func(fname)
+    else:
+        with open(fname) as f:
+            return func(f)
 
 
 def pearson(v1, v2):
@@ -136,6 +142,7 @@ def scale_down(data, distance=pearson, nd=2, rate=.01):
     return loc
 
 def draw2d(data, labels, fname, coding='PNG'):
+    from PIL import Image, ImageDraw
     img = Image.new('RGB', (2000,2000), (255,255,255))
     draw = ImageDraw.Draw(img)
     for i in range(len(data)):
