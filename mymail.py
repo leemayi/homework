@@ -7,7 +7,7 @@ import re
 import email
 import base64
 import quopri
-import mmseg
+import mmseg #pymmseg-cpp https://github.com/pluskid/pymmseg-cpp/
 
 mmseg.dict_load_defaults()
 PUNC = u'，。、：；！？‘“（）'

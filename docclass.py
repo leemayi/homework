@@ -57,6 +57,10 @@ class Classifier(object):
         bp = (weight*ap + totals*basicprob) / (weight+totals)
         return bp
 
+    def laplace_smoothed_prob(self, f, cat):
+        '''laplace smoothing'''
+        return (self.fcount(f, cat) + 1) / (self.catcount(cat) + len(self.categories()))
+
     def set_threshold(self, cat, t):
         self.thresholds[cat] = t
 
@@ -174,4 +178,16 @@ def fisher():
 
 
 if __name__ == '__main__':
-    fisher()
+    #fisher()
+    cl = NaiveBayes(getwords)
+
+    def foo(cl, word):
+        print '-'*10, word
+        for cat in ('good', 'bad'):
+            print cat, '\t', cl.fprob(word, cat), \
+                '\t', cl.laplace_smoothed_prob(word, cat), \
+                '\t', cl.weightedprob(word, cat, cl.fprob)
+
+    for i in range(5):
+        sampletrain(cl)
+        foo(cl, 'money')
