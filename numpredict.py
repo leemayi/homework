@@ -19,28 +19,23 @@ def wineset1():
         age = random() * 50
 
         price = wineprice(rating, age)
-        price *= (rangdom() * .4 + .8)
+        price *= (random() * .4 + .8)
 
         rows.append({'input': (rating, age),
             'result': price})
     return rows
 
 def euclidean(v1, v2):
-    d = 0.
-    for i in range(len(v1)):
-        d += (v1[i] - v2[i])**2
-    return math.sqrt(d)
+    return math.sqrt(sum([ ((v1[i]-v2[i])**2) for i in range(len(v1)) ]))
 
 def getdistances(data, v1):
-    dl = []
-    for i in range(len(data)):
-        v2 = data[i]['input']
-        dl.append((euclidean(v1, v2), i))
+    dl = [ (euclidean(v1, wine['input']), i) for i, wine in enumerate(data) ]
     dl.sort()
     return dl
 
 def knnestimate(data, v1, k=5):
     dlist = getdistances(data, v1)
+    avg = 0.
     for i in range(k):
         idx = dlist[i][1]
         avg += data[idx]['result']
@@ -48,7 +43,7 @@ def knnestimate(data, v1, k=5):
     return avg
 
 def gaussian(dist, sigma=10.):
-    return math.e ** (-dist**2/(2*sigma**2))
+    return math.e ** -(dist**2/(2 * sigma**2))
 
 def weightedknn(data, v1, k=5, weightf=gaussian):
     dlist = getdistances(data, v1)
@@ -56,8 +51,7 @@ def weightedknn(data, v1, k=5, weightf=gaussian):
     totalweight = 0.
 
     for i in range(k):
-        dist = dlist[i][0]
-        idx = dlist[i][1]
+        dist, idx = dlist[i]
         weight = weightf(dist)
         avg += weight * data[idx]['result']
         totalweight += weight
@@ -109,11 +103,22 @@ def rescale(data, scale):
         scaleddata.append({'input':scaled, 'result':row['result']})
     return scaleddata
 
-def createcostfunction(alfg, data):
+def createcostfunction(algf, data):
     def costf(scale):
         sdata = rescale(data, scale)
         return crossvalidate(algf, sdata, trials=10)
     return costf
+
+def createcostfunction2(algf, data):
+    def costf(scale):
+        sdata = rescale(data, scale[:-1])
+        def foo(*args, **kw):
+            return algf(*args, k=scale[-1], **kw)
+        return crossvalidate(foo, sdata, trials=10)
+    return costf
+
+weightdomain = [(0,20)]*4
+weightdomain2 = weightdomain + [(3,10)]
 
 def wineset3():
     rows = wineset1()
@@ -122,7 +127,7 @@ def wineset3():
             row['result'] *= .5
     return rows
 
-def probguess(data, v1, low, high, k=5, weightf=gauessian):
+def probguess(data, v1, low, high, k=5, weightf=gaussian):
     dlist = gestdistances(data, v1)
     nweight = 0.
     tweight = 0.
@@ -141,7 +146,7 @@ def probguess(data, v1, low, high, k=5, weightf=gauessian):
     return nweight / tweight
 
 def cumulativegraph(data, v1, high, k=5, weightf=gaussian):
-    from pylab import *
+    from pylab import arange, array, plot, show
     t1 = arange(0., high, .1)
     cprob = array([probguess(data, vec1, 0, v, k, weightf) for v in t1])
     plot(t1, cprob)
@@ -165,4 +170,7 @@ def probabilitygraph(data, vec1, high, k=5, weightf=gaussian, ss=5.):
     show()
 
 if __name__ == '__main__':
-    print wineprice(95, 3)
+    import optimization as op
+    data = wineset2()
+    costf = createcostfunction(weightedknn, data)
+    print op.genetic_optimize(weightdomain, costf, popsize=5, maxiter=20)
