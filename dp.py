@@ -150,4 +150,39 @@ def test_lcs():
     for r in b:
         print ' '.join(map(str, r))
 
-test_lcs()
+#test_lcs()
+
+def lis(a):
+    '''longest increasing sequence'''
+    n = len(a)
+    m, s = matrix(n, n, '_'), matrix(n, n, '_')
+    for i in range(n):
+        m[i][i] = 1
+        s[i][i] = a[i]
+    for l in range(2, n+1):
+        for i in range(n-l+1):
+            j = i+l-1
+            m[i][j] = 0
+            for k in range(i, j):
+                if a[j] > s[i][k]:
+                    q = m[i][k] + 1
+                    b = a[j]
+                else:
+                    q = m[i][k]
+                    b = s[i][k]
+                if q > m[i][j]:
+                    m[i][j] = q
+                    s[i][j] = b
+    return m, s
+
+def test_lis():
+    a = (1, 5, 6, 2, 3, 4, 8, 5)
+    print a
+    m, s = lis(a)
+    print m[0][len(a)-1]
+    for r in m:
+        print ' '.join(map(str, r))
+    for r in s:
+        print ' '.join(map(str, r))
+
+test_lis()
