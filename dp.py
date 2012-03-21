@@ -152,37 +152,74 @@ def test_lcs():
 
 #test_lcs()
 
-def lis(a):
+def lis1(a):
     '''longest increasing sequence'''
+    b = sorted(a)
+    m, n = len(a), len(b)
+    c, b = lcs(a, b)
+    print_lcs(b, a, m, n)
+    print
+
+def lis2(a):
+    def max_end(a):
+        if len(a) == 1:
+            return 1
+        if a[-1] > a[-2]:
+            return max_end(a[:-1]) + 1
+    m = 1
+    for i in range(len(a)):
+        n = max_end(a[:i+1])
+        if n > m:
+            m = n
+    return m
+
+def lis3(a):
     n = len(a)
-    m, s = matrix(n, n, '_'), matrix(n, n, '_')
+    s = [-sys.maxint] * (n+1)
+    l = 0
     for i in range(n):
-        m[i][i] = 1
-        s[i][i] = a[i]
-    for l in range(2, n+1):
-        for i in range(n-l+1):
-            j = i+l-1
-            m[i][j] = 0
-            for k in range(i, j):
-                if a[j] > s[i][k]:
-                    q = m[i][k] + 1
-                    b = a[j]
-                else:
-                    q = m[i][k]
-                    b = s[i][k]
-                if q > m[i][j]:
-                    m[i][j] = q
-                    s[i][j] = b
-    return m, s
+        b, t = 0, l-1
+        while b <= t:
+            m = (b+t)/2
+            if s[m] < a[i]:
+                b = m + 1
+            else:
+                t = m - 1
+        s[b] = a[i]
+        if (b+1) > l:
+            l = b + 1
+    return l
+
+def lis(a):
+    n = len(a)
+    f = [1] * n
+    m = [-1] * (n+1)
+    l = 1
+    k = 0
+    for i in range(0, n):
+        for j in range(i):
+            if a[j] < a[i] and f[j] >= f[i]:
+                f[i] = f[j] + 1
+                m[i] = j
+                if f[i] > l:
+                    l = f[i]
+                    k = i
+    print 'f:', f
+    return l, k, m
+
+def print_lis(a, k, m):
+    if k < 0:
+        return
+    print_lis(a, m[k], m)
+    print a[k],
+
 
 def test_lis():
-    a = (1, 5, 6, 2, 3, 4, 8, 5)
+    a = (1, 5, 6, 2, 3, 4, 8, 9, 5)
     print a
-    m, s = lis(a)
-    print m[0][len(a)-1]
-    for r in m:
-        print ' '.join(map(str, r))
-    for r in s:
-        print ' '.join(map(str, r))
+    l, k, m = lis(a)
+    print l, k
+    print 'm:', m
+    print_lis(a, k, m)
 
 test_lis()
