@@ -222,4 +222,60 @@ def test_lis():
     print 'm:', m
     print_lis(a, k, m)
 
-test_lis()
+#test_lis()
+
+def orange(start, stop=None, step=1):
+    if stop is None:
+        stop = start
+        start = 0
+    if (stop-start) * step < 0:
+        return []
+    if (stop - start) % step == 0:
+        return range(start, stop+step, step)
+    return range(start, stop, step)
+
+def test_orange():
+    assert orange(1, 0) == []
+    assert orange(0, 1, -1) == []
+    assert orange(0) == [0]
+    assert orange(0, 0) == [0]
+    assert orange(0, 0, 1) == [0]
+    assert orange(0, 0, -1) == [0]
+    assert orange(1) == [0, 1]
+    assert orange(0, 1) == [0, 1]
+    assert orange(1, 0, -1) == [1, 0]
+    assert orange(0, 2, 2) == [0, 2]
+    assert orange(2, 0, -2) == [2, 0]
+    assert orange(0, 3, 2) == [0, 2]
+    assert orange(0, 4, 2) == [0, 2, 4]
+
+def optimal_bst(p, q, n):
+    e = matrix(n+2, n+1)
+    w = matrix(n+2, n+1)
+    root = matrix(n+1, n+1)
+
+    for i in orange(1, n+1):
+        e[i][i-1] = q[i-1]
+        w[i][i-1] = q[i-1]
+    for l in orange(1, n):
+        for i in orange(1, n-l+1):
+            j = i+l-1
+            e[i][j] = sys.maxint
+            w[i][j] = w[i][j-1] + p[j] + q[j-1]
+            for r in orange(i, j):
+                t = e[i][r-1] + e[r+1][j] + w[i][j]
+                if t < e[i][j]:
+                    e[i][j] = t
+                    root[i][j] = r
+    return e, root
+
+def test_optimal_bst():
+    p = (None, .15, .1, .05, .1, .2)
+    q = (.05, .1, .05, .05, .05, .1)
+    n = len(q) - 1
+    e, root = optimal_bst(p, q, n)
+    for r in e:
+        print ' '.join(['%5s'%i for i in r])
+    print e[1][n]
+
+test_optimal_bst()
