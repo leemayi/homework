@@ -4,101 +4,112 @@ import sympy
 import re
 
 
-class Prob(object):
+delimiter = re.compile(r'[+\-=*/><() \t\n]')
+var = re.compile(r'[_a-zA-Z][_a-zA-Z0-9]*')
+logic_ops = ('>=', '<=', '==', '>', '<')
+debug = 0
 
-    delimiter = re.compile(r'[+\-=*/><() \t\n]')
-    var = re.compile(r'[_a-zA-Z][_a-zA-Z0-9]*')
-    logic_ops = ('>=', '<=', '==', '>', '<')
+def extract_var(ex):
+    return filter(var.match, re.split(delimiter, ex))
 
-    def __init__(self, name, definition):
-        print >> sys.stderr, '-'*20, 'problem'
-        print >> sys.stderr, definition
+def solve(definition):
+    print >> sys.stderr, '-'*20, 'problem'
+    print >> sys.stderr, definition
 
-        exs = []
-        vars_ = set()
-        target = None
-        cat = 'Continuous'
+    if debug > 1: print >> sys.stderr, '-'*20, 'parse'
+    exs, vars_, target, cat, mm = parse(definition)
 
-        print >> sys.stderr, '-'*20, 'parse'
-        for line in definition.split('\n'):
-            line = line.strip()
+    if debug > 1: print >> sys.stderr, '-'*20, 'setup'
+    prob, lpvar = setup(exs, vars_, target, cat, mm)
 
-            if not line or line.startswith('#'):
-                continue
-            elif line[:3].lower() in ('min', 'max'): #TODO:
-                mm, target = line.split(None, 1)
-                mm = mm.lower() # min or max
-                vars_ |= set(self.parse_var(target))
-            elif line[:3].lower() == 'cat':
-                cat = line.split(None, 1)[1]
-            else:
-                exs.append(line)
-                vars_ |= set(self.parse_var(line))
+    if debug > 1: print >> sys.stderr, '-'*20, 'solve'
+    status = prob.solve(pulp.GLPK(msg=0))
 
-        sym, lpvar = {}, {}
-        for n in vars_:
-            sym[n] = sympy.Symbol(n)
-            lpvar[n] = pulp.LpVariable(n, cat=cat)
+    print >> sys.stderr, '-'*20, 'result'
+    print pulp.LpStatus[status]
 
-        st = [str(eval(target, sym))]
-        for ex in exs:
-            for op in self.logic_ops:
-                if op in ex:
-                    left, right = ex.split(op, 1)
-                    ex2 = '%s-(%s)'%(left, right)
-                    ex3 = '%s %s 0' % (str(eval(ex2, sym)), op)
-                    st.append(ex3)
-                    break
+    def sort_var_name(x, y):
+        t = cmp(len(x), len(y))
+        return t if t != 0 else cmp(x, y)
 
-        print >> sys.stderr, '-'*20, 'setup'
-        mm = pulp.LpMinimize if mm == 'min' else pulp.LpMaximize
-        prob = pulp.LpProblem(name, mm)
-        for ex in st:
-            tmp = eval(ex, lpvar)
-            prob += tmp
+    res = {}
+    for n in sorted(vars_, sort_var_name):
+        v = pulp.value(lpvar[n])
+        res[n] = v
+        print n, ':', v
+    print 'target:', eval(target, res)
 
-        print >> sys.stderr, '-'*20, 'result'
-        status = prob.solve(pulp.GLPK(msg=0))
-        print pulp.LpStatus[status]
+def parse(definition):
+    exs = []
+    vars_ = set()
+    target = None
+    cat = 'Continuous'
 
-        res = {}
-        for n in sorted(vars_):
-            v = pulp.value(lpvar[n])
-            res[n] = v
-            print n, ':', v
-        print 'target:', eval(target, res)
+    for line in definition.split('\n'):
+        line = line.strip()
 
+        if not line or line.startswith('#'):
+            continue
+        elif line[:3].lower() in ('min', 'max'): #TODO:
+            mm, target = line.split(None, 1)
+            mm = mm.lower() # min or max
+            vars_ |= set(extract_var(target))
+        elif line[:3].lower() == 'cat':
+            cat = line.split(None, 1)[1]
+        else:
+            exs.append(line)
+            vars_ |= set(extract_var(line))
+    return exs, vars_, target, cat, mm
 
-    @classmethod
-    def parse_var(cls, ex):
-        return filter(cls.var.match, re.split(cls.delimiter, ex))
+def setup(exs, vars_, target, cat, mm):
+    sym, lpvar = {}, {}
+    for n in vars_:
+        sym[n] = sympy.Symbol(n)
+        lpvar[n] = pulp.LpVariable(n, cat=cat)
 
+    st = [str(eval(target, sym))]
+    for ex in exs:
+        for op in logic_ops:
+            if op in ex:
+                left, right = ex.split(op, 1)
+                ex2 = '%s-(%s)'%(left, right)
+                ex3 = '%s %s 0' % (str(eval(ex2, sym)), op)
+                st.append(ex3)
+                break
+
+    mm = pulp.LpMinimize if mm == 'min' else pulp.LpMaximize
+    prob = pulp.LpProblem('__anonymous__', mm)
+    for ex in st:
+        tmp = eval(ex, lpvar)
+        if debug > 1: print 's.t.', tmp
+        prob += tmp
+    return prob, lpvar
 
 
 def test1():
-    prob = '''
-min x1
+    solve('''
+min x
 #cat Integer
 
-x1 >= 100
-x2 >= 150
-x3 >= 120
-x4 >= 110
-(x1 - 100 - 60*y1 - 90*y2) * 1.04 == x2
-(x2 - 150 - 50*y3 + 112.5*y2) * 1.04 == x3
-(x3 - 120 + 84*y1 + 65*y3) * 1.04 == x4
+x - 100 - w1 - w2 == y1
+1.04*y1 - 150 - w3 == y2
+1.04*y2 - 120 + 1.25*w2 == y3
+1.04*y3 + 1.4*w1 + 1.3*w3 == 110
+x >= 0
 y1 >= 0
 y2 >= 0
 y3 >= 0
-y1 <= 1
-y2 <= 1
-y3 <= 1
-'''
-    Prob('1.18', prob)
+w1 >= 0
+w2 >= 0
+w3 >= 0
+w1 <= 60
+w2 <= 90
+w3 <= 50
+''')
 
 
 def test2():
-    prob = '''
+    solve('''
 max 2*x1 + x2
 
 5*x2 <= 15
@@ -106,11 +117,10 @@ max 2*x1 + x2
 x1 + x2 <= 5
 x1 >= 0
 x2 >= 0
-'''
-    Prob('', prob)
+''')
 
 def test3():
-    Prob('', '''
+    solve('''
 max 2*x1 + 3*x2 + x3
 
 x1 + x3 == 5
@@ -124,4 +134,5 @@ x5 >= 0
 ''')
 
 
+debug = 1
 test1()
