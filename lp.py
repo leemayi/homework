@@ -4,13 +4,12 @@ import sympy
 import re
 
 
-delimiter = re.compile(r'[+\-=*/><() \t\n]')
 var = re.compile(r'[_a-zA-Z][_a-zA-Z0-9]*')
 logic_ops = ('>=', '<=', '==', '>', '<')
 debug = 0
 
 def extract_var(ex):
-    return filter(var.match, re.split(delimiter, ex))
+    return set(re.findall(var, ex))
 
 def solve(definition):
     print >> sys.stderr, '-'*20, 'problem'
@@ -20,7 +19,7 @@ def solve(definition):
     exs, vars_, target, cat, mm = parse(definition)
 
     if debug > 1: print >> sys.stderr, '-'*20, 'setup'
-    prob, lpvar = setup(exs, vars_, target, cat, mm)
+    prob, target2, lpvar = setup(exs, vars_, target, cat, mm)
 
     if debug > 1: print >> sys.stderr, '-'*20, 'solve'
     status = prob.solve(pulp.GLPK(msg=0))
@@ -37,7 +36,7 @@ def solve(definition):
         v = pulp.value(lpvar[n])
         res[n] = v
         print n, ':', v
-    print 'target:', eval(target, res)
+    print 'target:', eval(target, res), '=', target2
 
 def parse(definition):
     exs = []
@@ -53,13 +52,37 @@ def parse(definition):
         elif line[:3].lower() in ('min', 'max'): #TODO:
             mm, target = line.split(None, 1)
             mm = mm.lower() # min or max
-            vars_ |= set(extract_var(target))
+            vars_ |= extract_var(target)
         elif line[:3].lower() == 'cat':
             cat = line.split(None, 1)[1]
         else:
-            exs.append(line)
-            vars_ |= set(extract_var(line))
+            st, var = parse_st(line)
+            exs.extend(st)
+            vars_ |= var
     return exs, vars_, target, cat, mm
+
+def parse_st(line):
+    '''st formatting as follow:
+    x1 > 1
+    2 > x2
+    x3,x4>=0
+    '''
+    for op in logic_ops:
+        if op in line:
+            left, right = line.split(op, 1)
+            break
+
+    if ',' in left:
+        sub = left.split(',')
+    else:
+        sub = [left]
+
+    st = []
+    var = set()
+    for left in sub:
+        var |= extract_var(left)
+        st.append('%s %s %s' % (left, op, right))
+    return st, var
 
 def setup(exs, vars_, target, cat, mm):
     sym, lpvar = {}, {}
@@ -67,7 +90,8 @@ def setup(exs, vars_, target, cat, mm):
         sym[n] = sympy.Symbol(n)
         lpvar[n] = pulp.LpVariable(n, cat=cat)
 
-    st = [str(eval(target, sym))]
+    target = eval(target, sym)
+    st = [str(target)]
     for ex in exs:
         for op in logic_ops:
             if op in ex:
@@ -83,56 +107,7 @@ def setup(exs, vars_, target, cat, mm):
         tmp = eval(ex, lpvar)
         if debug > 1: print 's.t.', tmp
         prob += tmp
-    return prob, lpvar
+    return prob, target, lpvar
 
 
-def test1():
-    solve('''
-min x
-#cat Integer
 
-x - 100 - w1 - w2 == y1
-1.04*y1 - 150 - w3 == y2
-1.04*y2 - 120 + 1.25*w2 == y3
-1.04*y3 + 1.4*w1 + 1.3*w3 == 110
-x >= 0
-y1 >= 0
-y2 >= 0
-y3 >= 0
-w1 >= 0
-w2 >= 0
-w3 >= 0
-w1 <= 60
-w2 <= 90
-w3 <= 50
-''')
-
-
-def test2():
-    solve('''
-max 2*x1 + x2
-
-5*x2 <= 15
-6*x1 + 2*x2 <= 24
-x1 + x2 <= 5
-x1 >= 0
-x2 >= 0
-''')
-
-def test3():
-    solve('''
-max 2*x1 + 3*x2 + x3
-
-x1 + x3 == 5
-x1 + 2*x2 + x4 == 10
-x2 + x5 == 4
-x1 >= 0
-x2 >= 0
-x3 >= 0
-x4 >= 0
-x5 >= 0
-''')
-
-
-debug = 1
-test1()
