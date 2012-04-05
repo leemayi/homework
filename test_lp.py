@@ -60,9 +60,19 @@ x1 <= 40
 x1,x2 >= 0
 '''
 
+prob5 = '''
+min 0.5*x1 + 0.2*x2 + 0.3*x3 + 0.8*x4
+
+400*x1 + 200*x2 + 150*x3 + 500*x4 >= 500
+3*x1 + 2*x2 >= 6
+2*x1 + 2*x2 + 4*x3 + 4*x4 >= 10
+2*x1 + 4*x2 + x3 + 5*x4 >= 8
+x1,x2,x3,x4 >= 0
+'''
+
 
 def smoking():
-    solve(prob1)
+    solve(prob5)
 
 if __name__ == '__main__':
     #unittest.main()

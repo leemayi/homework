@@ -27,16 +27,17 @@ def solve(definition):
     print >> sys.stderr, '-'*20, 'result'
     print pulp.LpStatus[status]
 
-    def sort_var_name(x, y):
-        t = cmp(len(x), len(y))
-        return t if t != 0 else cmp(x, y)
+    if pulp.LpStatus[status] == 'Optimal':
+        def sort_var_name(x, y):
+            t = cmp(len(x), len(y))
+            return t if t != 0 else cmp(x, y)
 
-    res = {}
-    for n in sorted(vars_, sort_var_name):
-        v = pulp.value(lpvar[n])
-        res[n] = v
-        print n, ':', v
-    print 'target:', eval(target, res), '=', target2
+        res = {}
+        for n in sorted(vars_, sort_var_name):
+            v = pulp.value(lpvar[n])
+            res[n] = v
+            print n, ':', v
+        print 'target:', eval(target, res), '=', target2
 
 def parse(definition):
     exs = []
@@ -55,6 +56,8 @@ def parse(definition):
             vars_ |= extract_var(target)
         elif line[:3].lower() == 'cat':
             cat = line.split(None, 1)[1]
+        elif line.lower() == 'end':
+            break
         else:
             st, var = parse_st(line)
             exs.extend(st)
