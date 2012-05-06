@@ -108,8 +108,12 @@ fprintf('\nProgram paused. Press enter to continue.\n');
 %pause;
 
 %% ==============================
-[theta2, Jhist] = gradientDescent(X, y, initial_theta, 0.00101, 400);
+initial_theta2 = zeros(n + 1, 1);
+[theta2, Jhist] = gradientDescent(X, y, initial_theta2, 0.002, 400);
+figure;
 plot(Jhist);
+[c, g] = costFunction(theta2, X, y);
+fprintf('cost found by gd: %f\n', c);
 fprintf('theta2: \n');
 fprintf(' %f \n', theta2);
 pause;
@@ -139,5 +143,5 @@ p = predict(theta, X);
 fprintf('Train Accuracy: %f\n', mean(double(p == y)) * 100);
 
 fprintf('\nProgram paused. Press enter to continue.\n');
-pause;
+%pause;
 
