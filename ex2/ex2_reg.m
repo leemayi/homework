@@ -87,7 +87,7 @@ fprintf('\nProgram paused. Press enter to continue.\n');
 initial_theta = zeros(size(X, 2), 1);
 
 % Set regularization parameter lambda to 1 (you should vary this)
-lambda = 0.1;
+lambda = 1;
 
 % Set Options
 options = optimset('GradObj', 'on', 'MaxIter', 400);
@@ -116,4 +116,19 @@ p = predict(theta, X);
 
 fprintf('Train Accuracy: %f\n', mean(double(p == y)) * 100);
 
+
+%==================================
+initial_theta2 = zeros(size(X, 2), 1);
+[X2, mu, sigma] = featureNormalize(X(:,2:end));
+X2 = [ones(size(X, 1), 1), X2];
+[theta2, Jhist] = gradientDescent(@(t,x_,y_)(costFunctionReg(t,x_,y_,lambda)), X2, y, initial_theta2, 4.73, 400);
+
+figure;
+plot(Jhist);
+[c, g] = costFunctionReg(theta2, X2, y, lambda);
+fprintf('cost found by gd: %f\n', c);
+%fprintf(' %f \n', theta2);
+
+plotDecisionBoundary2(theta2, X2, y);
+%==================================
 

@@ -22,6 +22,7 @@ clear ; close all; clc
 %% Load Data
 %  The first two columns contains the exam scores and the third column
 %  contains the label.
+format long;
 
 data = load('ex2data1.txt');
 X = data(:, [1, 2]); y = data(:, 3);
@@ -107,17 +108,22 @@ hold off;
 fprintf('\nProgram paused. Press enter to continue.\n');
 %pause;
 
-%% ==============================
+%==================================
 initial_theta2 = zeros(n + 1, 1);
-[theta2, Jhist] = gradientDescent(X, y, initial_theta2, 0.002, 400);
+[X2, mu, sigma] = featureNormalize(X(:,2:end));
+X2 = [ones(size(X, 1), 1), X2];
+[theta2, Jhist] = gradientDescent(@costFunction, X2, y, initial_theta2, 5, 400);
+
 figure;
 plot(Jhist);
-[c, g] = costFunction(theta2, X, y);
+[c, g] = costFunction(theta2, X2, y);
 fprintf('cost found by gd: %f\n', c);
 fprintf('theta2: \n');
 fprintf(' %f \n', theta2);
-pause;
-%% ==============================
+
+plotDecisionBoundary2(theta2, X2, y);
+%==================================
+
 
 %% ============== Part 4: Predict and Accuracies ==============
 %  After learning the parameters, you'll like to use it to predict the outcomes

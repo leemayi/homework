@@ -1,4 +1,4 @@
-function plotDecisionBoundary(theta, X, y)
+function plotDecisionBoundary2(theta, X, y)
 %PLOTDECISIONBOUNDARY Plots the data points X and y into a new figure with
 %the decision boundary defined by theta
 %   PLOTDECISIONBOUNDARY(theta, X,y) plots the data points with + for the 
@@ -24,11 +24,11 @@ if size(X, 2) <= 3
     
     % Legend, specific for the exercise
     legend('Admitted', 'Not admitted', 'Decision Boundary')
-    axis([30, 100, 30, 100])
+    axis([min(X(:,2))-.1, max(X(:,2))+.1, min(X(:,3))-.1, max(X(:,3))+.1])
 else
     % Here is the grid range
-    u = linspace(-1, 1.5, 50);
-    v = linspace(-1, 1.5, 50);
+    u = linspace(min(X(:,2)), max(X(:,2)), 50);
+    v = linspace(min(X(:,3)), max(X(:,3)), 50);
 
     z = zeros(length(u), length(v));
     % Evaluate z = theta*x over the grid
@@ -38,11 +38,10 @@ else
         end
     end
     z = z'; % important to transpose z before calling contour
-    fprintf('#zero%f\n', sum(sum(z==0)));
 
     % Plot z = 0
     % Notice you need to specify the range [0, 0]
-    contour(u, v, z, [0, 0], 'LineWidth', 2)
+    contour(u, v, z, [-100, 0], 'LineWidth', 2)
 end
 hold off
 
