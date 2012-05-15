@@ -30,6 +30,38 @@ J = 0;
 Theta1_grad = zeros(size(Theta1));
 Theta2_grad = zeros(size(Theta2));
 
+for i = 1:m,
+    a1 = [1; X(i,:)'];
+
+    z2 = Theta1 * a1;
+    a2 = [1; sigmoid(z2)];
+
+    z3 = Theta2 * a2;
+    a3 = sigmoid(z3);
+
+    h = a3;
+
+    yi = zeros(num_labels, 1);
+    yi(y(i)) = 1;
+
+    J -= (yi' * log(h) + (1-yi)' * log(1-h));
+
+    d3 = a3 - yi;
+
+    d2 = (Theta2' * d3)(2:end) .* sigmoidGradient(z2);
+
+    Theta1_grad += d2 * a1';
+    Theta2_grad += d3 * a2';
+end
+
+J += lambda * (sum(sum(Theta1(:,2:end) .^ 2)) + sum(sum(Theta2(:,2:end) .^ 2))) / 2.0;
+J /= m;
+
+Theta1_grad = (Theta1_grad + [zeros(size(Theta1, 1), 1), lambda .* Theta1(:,2:end)]) / m;
+Theta2_grad = (Theta2_grad + [zeros(size(Theta2, 1), 1), lambda .* Theta2(:,2:end)]) / m;
+
+% Unroll gradients
+grad = [Theta1_grad(:) ; Theta2_grad(:)];
 % ====================== YOUR CODE HERE ======================
 % Instructions: You should complete the code by working through the
 %               following parts.
@@ -63,29 +95,7 @@ Theta2_grad = zeros(size(Theta2));
 %
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 % -------------------------------------------------------------
 
 % =========================================================================
-
-% Unroll gradients
-grad = [Theta1_grad(:) ; Theta2_grad(:)];
-
-
 end
