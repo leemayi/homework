@@ -55,15 +55,22 @@ error_val   = zeros(m, 1);
 
 
 %  Train linear regression with lambda = 0
+times = 50;
 
 for i = 1:m,
-    Xtmp = X(1:i, :);
-    ytmp = y(1:i);
+    et = 0;
+    ev = 0;
+    for j = 1:times,
+        r = randperm(m)(1:i);
+        Xtmp = X(r, :);
+        ytmp = y(r);
 
-    [theta] = trainLinearReg(Xtmp, ytmp, lambda);
-    error_train(i) = linearRegCostFunction(Xtmp, ytmp, theta, 0);
-
-    error_val(i) = linearRegCostFunction(Xval, yval, theta, 0);
+        [theta] = trainLinearReg(Xtmp, ytmp, lambda);
+        et += linearRegCostFunction(Xtmp, ytmp, theta, 0);
+        ev += linearRegCostFunction(Xval, yval, theta, 0);
+    end
+    error_train(i) = et / times;
+    error_val(i) = ev / times;
 end;
 
 
