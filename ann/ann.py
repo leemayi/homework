@@ -35,18 +35,18 @@ def sigmoidGradient(z):
     return np.multiply(sigmoid(z), 1-sigmoid(z))
 
 
-def nnCostFunction(theta1,
-    theta2,
+def nnCostFunction(nn_params,
     input_layer_size,
     hidden_layer_size,
     num_labels,
     X,
     y,
     lambda_):
-    '''
-    the neural network cost function for a two layer neural network
-    J, grad = nnCostFunction(...)
-    '''
+
+    num = hidden_layer_size * (input_layer_size+1)
+    theta1 = nn_params[:num].reshape((hidden_layer_size, input_layer_size+1))
+    theta2 = nn_params[num:].reshape((num_labels, hidden_layer_size+1))
+
     m = X.shape[0]
     J = 0
     theta1_grad = np.zeros(theta1.shape)
@@ -66,10 +66,12 @@ def nnCostFunction(theta1,
         yi = np.zeros((num_labels, 1))
         tmp = y[i,0]
         if tmp == 10:
-            tmp = 0
+            tmp = 9
+        else:
+            tmp -= 1
         yi[tmp] = 1
 
-        J -= (yi.T * np.log(h) + (1-yi).T * np.log(1-h))
+        J -= (yi.T * np.log(h) + (1-yi).T * np.log(1-h))[0,0]
 
         d3 = a3 - yi
 
@@ -78,26 +80,66 @@ def nnCostFunction(theta1,
         theta1_grad += d2 * a1.T
         theta2_grad += d3 * a2.T
 
-    J += .5 * lambda_ * (np.square(theta1[:,1:]).sum() + np.square(theta2[:,1:]).sum())
+    J += lambda_ * (np.square(theta1[:,1:]).sum() + np.square(theta2[:,1:]).sum()) / 2.
     J /= m
 
     theta1_grad = (theta1_grad + np.hstack((np.zeros((theta1.shape[0], 1)), lambda_ * theta1[:,1:]))) / m
     theta2_grad = (theta2_grad + np.hstack((np.zeros((theta2.shape[0], 1)), lambda_ * theta2[:,1:]))) / m
 
-    return J, (theta1_grad, theta2_grad)
+    return J, np.hstack((theta1_grad.flatten(), theta2_grad.flatten())).T
+
+
+def randInitializeWeights(L_in, L_out):
+    #epsilon_init = 6 ^ .5 / (L_out + L_in) ^ .5
+    epsilon_init = 0.12
+    return np.matrix(np.random.rand(L_out, 1 + L_in) * 2 * epsilon_init - epsilon_init)
+
+
+def max_index(v):
+    max_idx = 0
+    max_ = v[0]
+    for i in range(v.size):
+        if v[i] > max_:
+            max_ = v[i]
+            max_ix = i
+    return max_idx
+
+
+def predict(theta1, theta2, X):
+    m = X.shape[0]
+    num_labels = theta2.shape[0]
+
+    h1 = sigmoid(np.hstack((ones((m, 1)), X)) * theta1.T)
+    h2 = sigmoid(np.hstack((ones((m, 1)), h1)) * theta2.T)
+    return max_index(h2)
+
+
+def fmin(costFunction, initial, alpha=.3, maxiter=50):
+    theta = initial
+    for i in range(maxiter):
+        J, grad = costFunction(theta)
+        if small_enough(grad):
+            break
+        theta -= alpha * grad
+    return theta, J
 
 
 def ex4():
     input_layer_size = 400
     hidden_layer_size = 25
     num_labels = 10
-    lambda_ = 0
+    lambda_ = 1
+    nn_params = np.hstack((theta1.flatten(), theta2.flatten())).T
 
-    J, grad = nnCostFunction(theta1, theta2,
+    J, grad = nnCostFunction(nn_params,
         input_layer_size, hidden_layer_size,
         num_labels, X, y, lambda_)
 
     print J
+
+    g = sigmoidGradient(np.array([1,-.5,0,.5,1]))
+    print g
+
 
 
 if __name__ == '__main__':
