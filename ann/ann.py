@@ -1,37 +1,38 @@
-from math import log
 import numpy as np
 
+def load_txt(fname):
+    with open(fname) as f:
+        for _ in range(5):
+            f.readline()
+        return np.matrix(f.read().strip().replace('\n', ';'))
+
+'''
+X = load('X.txt')
+y = load('y.txt')
+theta1 = load('theta1.txt')
+theta2 = load('theta2.txt')
+
+np.save('X.npy', X)
+np.save('y.npy', y)
+np.save('theta1.npy', theta1)
+np.save('theta2.npy', theta2)
+'''
 
 def load(fname):
-
-    def readn(fp, start_or_stop, stop=None):
-        if stop is None:
-            start, stop = 0, start_or_stop
-        else:
-            start, stop = start_or_stop, stop
-        assert start < stop
-
-        for _ in xrange(n):
-            yield fp.readline()
-
-    with open(fname) as f:
-        meta = {}
-        for line in head(f, 5):
-            if line.startswith('#') and ':' in line:
-                key, val = line[1:].split(':', 1)
-                meta[key.strip()] = val.strip()
-        return meta
+    return np.matrix(np.load(fname))
 
 
-print load('X.txt')
+X = load('data/X.npy')
+y = load('data/y.npy')
+theta1 = load('data/theta1.npy')
+theta2 = load('data/theta2.npy')
 
 
-def ex4():
-    input_layer_size = 400
-    hidden_layer_size = 25
-    num_lables = 10
+def sigmoid(z):
+    return 1. / (1. + np.exp(-z))
 
-    pass
+def sigmoidGradient(z):
+    return np.multiply(sigmoid(z), 1-sigmoid(z))
 
 
 def nnCostFunction(theta1,
@@ -62,19 +63,22 @@ def nnCostFunction(theta1,
 
         h = a3
 
-        yi = np.zeros((num_lables, 1))
-        yi[y[i]] = 1
+        yi = np.zeros((num_labels, 1))
+        tmp = y[i,0]
+        if tmp == 10:
+            tmp = 0
+        yi[tmp] = 1
 
-        J -= (yi.T * log(h) + (1-yi).T * log(1-h))
+        J -= (yi.T * np.log(h) + (1-yi).T * np.log(1-h))
 
         d3 = a3 - yi
 
-        d2 = (theta2.T * d3)[1:] * sigmoidGradient(z2)
+        d2 = np.multiply((theta2.T * d3)[1:], sigmoidGradient(z2))
 
         theta1_grad += d2 * a1.T
         theta2_grad += d3 * a2.T
 
-    J += .5 * lambda_ * (sum(sum(theta1[:,1:] ** 2)) + sum(sum(theta2[:,1:] ** 2)))
+    J += .5 * lambda_ * (np.square(theta1[:,1:]).sum() + np.square(theta2[:,1:]).sum())
     J /= m
 
     theta1_grad = (theta1_grad + np.hstack((np.zeros((theta1.shape[0], 1)), lambda_ * theta1[:,1:]))) / m
@@ -82,3 +86,19 @@ def nnCostFunction(theta1,
 
     return J, (theta1_grad, theta2_grad)
 
+
+def ex4():
+    input_layer_size = 400
+    hidden_layer_size = 25
+    num_labels = 10
+    lambda_ = 0
+
+    J, grad = nnCostFunction(theta1, theta2,
+        input_layer_size, hidden_layer_size,
+        num_labels, X, y, lambda_)
+
+    print J
+
+
+if __name__ == '__main__':
+    ex4()
