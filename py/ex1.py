@@ -12,7 +12,6 @@ def ml_class_path():
     assert pos >= 0
     return fpath[:pos+len('ml-class')]
 
-ex1path = os.path.join(ml_class_path(), 'ex1')
 
 def load_txt(fname):
     with open(fname) as f:
@@ -147,4 +146,5 @@ def ex1_multi():
 
 
 if __name__ == '__main__':
+    ex1path = os.path.join(ml_class_path(), 'ex1')
     ex1_multi()
