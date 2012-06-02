@@ -74,12 +74,15 @@ fprintf('\nFeedforward Using Neural Network ...\n')
 % Weight regularization parameter (we set this to 0 here).
 lambda = 0;
 
-J = nnCostFunction(nn_params, input_layer_size, hidden_layer_size, ...
+[J, grad] = nnCostFunction(nn_params, input_layer_size, hidden_layer_size, ...
                    num_labels, X, y, lambda);
 
 fprintf(['Cost at parameters (loaded from ex4weights): %f '...
          '\n(this value should be about 0.287629)\n'], J);
 
+fprintf('grad=%f\n', grad(1:10));
+fprintf('\n\n');
+fprintf('grad_=%f\n', grad(end-10:end));
 fprintf('\nProgram paused. Press enter to continue.\n');
 %pause;
 
@@ -93,14 +96,17 @@ fprintf('\nChecking Cost Function (w/ Regularization) ... \n')
 % Weight regularization parameter (we set this to 1 here).
 lambda = 1;
 
-J = nnCostFunction(nn_params, input_layer_size, hidden_layer_size, ...
+[J, grad] = nnCostFunction(nn_params, input_layer_size, hidden_layer_size, ...
                    num_labels, X, y, lambda);
 
 fprintf(['Cost at parameters (loaded from ex4weights): %f '...
          '\n(this value should be about 0.383770)\n'], J);
 
+fprintf('grad=%f\n', grad(1:10));
+fprintf('\n\n');
+fprintf('grad_=%f\n', grad(end-10:end));
 fprintf('Program paused. Press enter to continue.\n');
-%pause;
+pause;
 
 
 %% ================ Part 5: Sigmoid Gradient  ================
@@ -205,8 +211,9 @@ Theta1 = reshape(nn_params(1:hidden_layer_size * (input_layer_size + 1)), ...
 Theta2 = reshape(nn_params((1 + (hidden_layer_size * (input_layer_size + 1))):end), ...
                  num_labels, (hidden_layer_size + 1));
 
+fprintf('opt value: %f\n', costFunction(nn_params));
 fprintf('Program paused. Press enter to continue.\n');
-%pause;
+pause;
 
 
 %% ================= Part 9: Visualize Weights =================

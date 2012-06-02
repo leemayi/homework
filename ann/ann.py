@@ -1,4 +1,6 @@
 import numpy as np
+import scipy.optimize as opt
+
 
 def load_txt(fname):
     with open(fname) as f:
@@ -22,12 +24,6 @@ def load(fname):
     return np.matrix(np.load(fname))
 
 
-X = load('data/X.npy')
-y = load('data/y.npy')
-theta1 = load('data/theta1.npy')
-theta2 = load('data/theta2.npy')
-
-
 def sigmoid(z):
     return 1. / (1. + np.exp(-z))
 
@@ -35,17 +31,23 @@ def sigmoidGradient(z):
     return np.multiply(sigmoid(z), 1-sigmoid(z))
 
 
+def unravel(nn_params, input_layer_size, hidden_layer_size, num_labels):
+    num = hidden_layer_size * (input_layer_size+1)
+    theta1 = nn_params[:num].reshape((hidden_layer_size, input_layer_size+1))
+    theta2 = nn_params[num:].reshape((num_labels, hidden_layer_size+1))
+    return theta1, theta2
+
+
 def nnCostFunction(nn_params,
     input_layer_size,
     hidden_layer_size,
     num_labels,
-    X,
-    y,
-    lambda_):
+    X, y, lambda_):
 
-    num = hidden_layer_size * (input_layer_size+1)
-    theta1 = nn_params[:num].reshape((hidden_layer_size, input_layer_size+1))
-    theta2 = nn_params[num:].reshape((num_labels, hidden_layer_size+1))
+    theta1, theta2 = unravel(nn_params,
+        input_layer_size,
+        hidden_layer_size,
+        num_labels)
 
     m = X.shape[0]
     J = 0
@@ -114,21 +116,17 @@ def predict(theta1, theta2, X):
     return max_index(h2)
 
 
-def fmin(costFunction, initial, alpha=.3, maxiter=50):
-    theta = initial
-    for i in range(maxiter):
-        J, grad = costFunction(theta)
-        if small_enough(grad):
-            break
-        theta -= alpha * grad
-    return theta, J
-
-
 def ex4():
+    X = load('data/X.npy')
+    y = load('data/y.npy')
+    theta1 = load('data/theta1.npy')
+    theta2 = load('data/theta2.npy')
+
     input_layer_size = 400
     hidden_layer_size = 25
     num_labels = 10
-    lambda_ = 1
+    lambda_ = 0
+
     nn_params = np.hstack((theta1.flatten(), theta2.flatten())).T
 
     J, grad = nnCostFunction(nn_params,
@@ -136,10 +134,45 @@ def ex4():
         num_labels, X, y, lambda_)
 
     print J
+    print grad
+    return
 
-    g = sigmoidGradient(np.array([1,-.5,0,.5,1]))
-    print g
+    initial_theta1 = randInitializeWeights(input_layer_size, hidden_layer_size)
+    initial_theta2 = randInitializeWeights(hidden_layer_size, num_labels)
+    
+    initial_nn_params = np.hstack((initial_theta1.flatten(), initial_theta2.flatten())).T
 
+    cache = {}
+    def costFunction(theta):
+        k = id(theta)
+        if k not in cache:
+            cache[k] = nnCostFunction(theta,
+                input_layer_size,
+                hidden_layer_size,
+                num_labels,
+                X, y, lambda_)
+        return cache[k][0]
+
+    def gradientFunction(theta):
+        k = id(theta)
+        if k not in cache:
+            cache[k] = nnCostFunction(theta,
+                input_layer_size,
+                hidden_layer_size,
+                num_labels,
+                X, y, lambda_)
+        return cache[k][1]
+
+    nn_params, allvecs = opt.fmin_cg(costFunction, initial_nn_params, gradientFunction, maxiter=50, retall=1)
+
+    theta1, theta2 = unravel(nn_params,
+        input_layer_size,
+        hidden_layer_size,
+        num_labels)
+
+    print costFunction(nn_params)
+    print '-'*10
+    print costFunction(allvecs)
 
 
 if __name__ == '__main__':
