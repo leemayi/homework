@@ -4,19 +4,7 @@ import numpy as np
 import pylab as pl
 import scipy.linalg as linalg
 
-
-
-def ml_class_path():
-    fpath = os.path.realpath(__file__)
-    pos = fpath.find('ml-class')
-    assert pos >= 0
-    return fpath[:pos+len('ml-class')]
-
-
-def load_txt(fname):
-    with open(fname) as f:
-        return np.matrix([ map(float, line.rstrip().split(',')) \
-            for line in f.xreadlines() ])
+from util import ml_class_path, load_txt
 
 
 def plot_data(x, y):
