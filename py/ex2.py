@@ -12,11 +12,10 @@ def plot_data(X, y):
     pl.figure()
     pl.plot(X[y==1,0], X[y==1,1], 'k+')
     pl.plot(X[y==0,0], X[y==0,1], 'ko')
-    
+
 
 def cost_function(theta, X, y, lambda_=0):
     m = y.size
-    n = theta.size
 
     o = sigmoid(np.dot(X, theta))
 
@@ -31,7 +30,7 @@ def cost_function(theta, X, y, lambda_=0):
 
 def plot_decision_boundary(theta, X, y):
     plot_data(X[:,1:], y)
-    
+
     if X.shape[1] <= 3:
         plot_x = np.arange(X[:,1].min()-2, X[:,1].max()+2)
         plot_y = (-1. / theta[2]) * (theta[1] * plot_x + theta[0])
@@ -46,12 +45,13 @@ def plot_decision_boundary(theta, X, y):
         u = np.linspace(-1, 1.5, 50)
         v = np.linspace(-1, 1.5, 50)
         n = u.size
-        u.shape = (n,1)
-        v.shape = (n,1)
-        z = np.dot(map_feature(u, v), theta)
-        pl.plot([0],[0])
-        pl.plot(u[z>=.5], v[z>=.5])
-        #TODO: use contour to draw decision boundary
+        z = np.zeros((n, n))
+
+        for i in range(n):
+            for j in range(n):
+                z[i,j] = np.dot(map_feature(u[i], v[j]), theta)
+
+        pl.contour(u, v, z, [0])
 
 
 def ex2():
@@ -86,10 +86,17 @@ def ex2():
     #optimizing using scipy.optimize
     X = np.hstack((np.ones((m, 1)), _X))
 
+    cache = {}
     def costf(theta):
-        return cost_function(theta, X, y)[0]
+        k = id(theta)
+        if k not in cache:
+            cache[k] = cost_function(theta, X, y)
+        return cache[k][0]
     def difff(theta):
-        return cost_function(theta, X, y)[1]
+        k = id(theta)
+        if k not in cache:
+            cache[k] = cost_function(theta, X, y)
+        return cache[k][1]
 
     print opt.check_grad(costf, difff, initial_theta)
 
@@ -118,30 +125,34 @@ def ex2_reg():
     data = load_txt(os.path.join(ex2path, 'ex2data2.txt'))
     _X = data[:,:2]
     y = data[:,2]
-    m = _X.shape[0]
 
-    plot_data(_X, y)
-    pl.xlabel('Microchip Test 1')
-    pl.ylabel('Microchip Test 2')
-    pl.legend(['y=1', 'y=0'])
+#    plot_data(_X, y)
+#    pl.xlabel('Microchip Test 1')
+#    pl.ylabel('Microchip Test 2')
+#    pl.legend(['y=1', 'y=0'])
 
     X = map_feature(_X[:,0], _X[:,1])
 
     initial_theta = np.zeros(X.shape[1])
 
     lambda_ = 1.
-    cost, grad = cost_function(initial_theta, X, y, lambda_)
-
-    print 'cost at initial theta (zeros):', cost
+    print 'cost at initial theta (zeros):', cost_function(initial_theta, X, y, lambda_)[0]
 
     # Regularization
-    X_norm, mu, sigma = feature_normalize(X[:,1:])
-    X = np.hstack((np.ones((m, 1)), X_norm))
+    #X_norm, mu, sigma = feature_normalize(X[:,1:])
+    #X = np.hstack((np.ones((m, 1)), X_norm))
 
+    cache = {}
     def costf(theta):
-        return cost_function(theta, X, y, lambda_)[0]
+        k = id(theta)
+        if k not in cache:
+            cache[k] = cost_function(theta, X, y, lambda_)
+        return cache[k][0]
     def difff(theta):
-        return cost_function(theta, X, y, lambda_)[1]
+        k = id(theta)
+        if k not in cache:
+            cache[k] = cost_function(theta, X, y, lambda_)
+        return cache[k][1]
 
     class step(object):
         def __init__(self, n=1):
@@ -154,6 +165,7 @@ def ex2_reg():
 
     maxiter = 50
     theta, allvec = opt.fmin_ncg(costf, initial_theta, difff, retall=1, maxiter=maxiter, callback=step())
+#    theta, allvec = opt.fmin_bfgs(costf, initial_theta, difff, retall=1, maxiter=maxiter, callback=step())
     print 'optimal cost:', costf(theta)
 
     Jhist = [costf(t) for t in allvec]
