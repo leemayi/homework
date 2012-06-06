@@ -33,3 +33,31 @@ def gd(cost_function, X, y, theta, alpha=.01, maxiter=50):
         J_history[i] = cost
 
     return theta, J_history
+
+
+def logistic_cost_function(theta, X, y, lambda_=0):
+    m = y.size
+    o = sigmoid(np.dot(X, theta))
+    J = (-1./m) * (np.dot(y.T, np.log(o)) + np.dot((1.-y).T, np.log(1.-o))) \
+        + (lambda_/(2.*m)) * np.dot(theta[1:], theta[1:])
+    return J
+
+
+def logistic_grad_function(theta, X, y, lambda_=0):
+    m = y.size
+    o = sigmoid(np.dot(X, theta))
+    grad = (1./m) * np.dot(X.T, o-y)
+    grad[1:] += (lambda_/m) * theta[1:]
+    return grad
+
+
+class step(object):
+    def __init__(self, n=1):
+        self.i = 0
+        self.n = n
+    def __call__(self, xk):
+        self.i += 1
+        if self.i % self.n == 0:
+            print 'Iteration %02d' % self.i
+
+

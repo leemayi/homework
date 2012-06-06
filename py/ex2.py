@@ -4,7 +4,7 @@ import numpy as np
 import pylab as pl
 import scipy.optimize as opt
 
-from util import ml_class_path, load_txt, sigmoid, gd
+from util import ml_class_path, load_txt, sigmoid, gd, logistic_cost_function, logistic_grad_function, step
 from ex1 import feature_normalize
 
 
@@ -135,33 +135,17 @@ def ex2_reg():
 
     initial_theta = np.zeros(X.shape[1])
 
-    lambda_ = 1.
+    lambda_ = 0
     print 'cost at initial theta (zeros):', cost_function(initial_theta, X, y, lambda_)[0]
 
     # Regularization
     #X_norm, mu, sigma = feature_normalize(X[:,1:])
     #X = np.hstack((np.ones((m, 1)), X_norm))
 
-    cache = {}
     def costf(theta):
-        k = id(theta)
-        if k not in cache:
-            cache[k] = cost_function(theta, X, y, lambda_)
-        return cache[k][0]
+        return logistic_cost_function(theta, X, y, lambda_)
     def difff(theta):
-        k = id(theta)
-        if k not in cache:
-            cache[k] = cost_function(theta, X, y, lambda_)
-        return cache[k][1]
-
-    class step(object):
-        def __init__(self, n=1):
-            self.i = 0
-            self.n = n
-        def __call__(self, xk):
-            self.i += 1
-            if self.i % self.n == 0:
-                print 'Iteration %02d' % self.i
+        return logistic_grad_function(theta, X, y, lambda_)
 
     maxiter = 50
     theta, allvec = opt.fmin_ncg(costf, initial_theta, difff, retall=1, maxiter=maxiter, callback=step())
