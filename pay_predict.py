@@ -9,24 +9,30 @@ log2 = lambda x: log(x) / log(2)
 
 
 
-
-
 class Node(object):
 
-    def __init__(self, label, children=None):
+    def __init__(self, is_leaf, label=None, X=None, y=None):
+        if is_leaf:
+            self.make_leaf(X, y)
+        else:
+            self.make_node(label)
+
+    def make_node(self, label):
+        self.is_leaf = False
         self.label = label
-        self.children = {} if children is None else children
+        self.children = {}
 
-    def add_child(self, label, child):
-        self.children[label] = child
-
-
-class Leaf(object):
-
-    def __init__(self, X, y):
+    def make_leaf(self, X, y):
+        self.is_leaf = True
         self.X = X
         self.y = y
         self.calc()
+        self.label = self.make_label()
+        if hasattr(self, 'children'):
+            del self.children
+
+    def add_child(self, label, child):
+        self.children[label] = child
 
     def calc(self):
         self.size = self.y.shape[0]
@@ -40,20 +46,16 @@ class Leaf(object):
         self.target = max_k
         self.dominant = max_v
 
-    @property
-    def label(self):
-        return '%s:%d%%(%d%%)' % (
+    def make_label(self):
+        return '%s:%d%%(%d%%) %s' % (
             self.target,
             self.dominant*100/self.size,
             self.size*100/TOTAL,
+            ','.join(['%s:%d'%(k,v) for k,v in dist(self.y)]),
             )
-        return '%s:%d%%(%d%%)_%d(%d)' % (
-            self.target,
-            self.dominant*100/self.size,
-            self.size*100/TOTAL,
-            self.dominant,
-            self.size,
-            )
+
+    def __str__(self):
+        return self.label
 
 
 def dist(y):
@@ -68,7 +70,7 @@ def entropy(y):
 
 def generate_tree(X, y, ex=[], theta1=0., theta2=0., indent=0):
     if len(y) <= theta1:
-        return Leaf(X, y)
+        return Node(is_leaf=True, X=X, y=y)
 
     m, n = X.shape
     cur_e = entropy(y)
@@ -94,9 +96,9 @@ def generate_tree(X, y, ex=[], theta1=0., theta2=0., indent=0):
 
     gain = cur_e - min_e
     if gain <= theta2:
-        return Leaf(X, y)
+        return Node(is_leaf=True, X=X, y=y)
 
-    n = Node(TITLE[bestf])
+    n = Node(is_leaf=False, label=TITLE[bestf])
 
     for val, Xi, yi in split_by_feature(X, y, bestf):
         child = generate_tree(Xi, yi, ex+[bestf], theta1, theta2, indent+1)
@@ -118,7 +120,7 @@ def split_by_feature(X, y, feature):
 
 def dot(tree):
     def _print(t):
-        if not isinstance(t, Node):
+        if t.is_leaf:
             return
         for elabel, child in t.children.iteritems():
             print '  node%d [label="%s"];' % (id(t), t.label)
@@ -132,14 +134,14 @@ def dot(tree):
 
 
 def prune_same_target(tree):
-    if not hasattr(tree, 'children'):
+    if tree.is_leaf:
         return
 
     for child in tree.children.values():
         prune_same_target(child)
 
-    leafs = filter(lambda i:isinstance(i[1], Leaf), tree.children.items())
-    nodes = filter(lambda i:not isinstance(i[1], Leaf), tree.children.items())
+    leafs = filter(lambda i:i[1].is_leaf, tree.children.items())
+    nodes = filter(lambda i:not i[1].is_leaf, tree.children.items())
 
     targets = set([ leaf.target for _,leaf in leafs ])
     if len(targets) > 1:
@@ -147,9 +149,11 @@ def prune_same_target(tree):
 
     Xmerge = np.vstack(map(lambda i:i[1].X, leafs))
     ymerge = np.hstack(map(lambda i:i[1].y, leafs))
-    ELSE = Leaf(Xmerge, ymerge)
-
-    tree.children = dict([('ELSE', ELSE)] + nodes)
+    if nodes:
+        ELSE = Node(is_leaf=True, X=Xmerge, y=ymerge)
+        tree.children = dict([('ELSE', ELSE)] + nodes)
+    else:
+        tree.make_leaf(Xmerge, ymerge)
 
 
 def prune_small_branches(tree, threshold):
@@ -159,25 +163,30 @@ def prune_small_branches(tree, threshold):
     for child in tree.children.values():
         prune_small_branches(child, threshold)
 
-    leafs = filter(lambda i:isinstance(i[1], Leaf), tree.children.items())
-    nodes = filter(lambda i:not isinstance(i[1], Leaf), tree.children.items())
+    leafs = filter(lambda i:i[1].is_leaf, tree.children.items())
+    nodes = filter(lambda i:not i[1].is_leaf, tree.children.items())
 
     if not leafs:
         return
+
     leafs.sort(lambda i,j: cmp(i[1].size, j[1].size))
-    s = 0
-    for idx, (_, leaf) in enumerate(leafs):
+
+    s, idx = 0, 0
+    for _, leaf in leafs:
         s += leaf.size
         if s > threshold:
             break
+        idx += 1
     if idx < 1:
         return
 
     Xmerge = np.vstack(map(lambda i:i[1].X, leafs[:idx]))
     ymerge = np.hstack(map(lambda i:i[1].y, leafs[:idx]))
-    ELSE = Leaf(Xmerge, ymerge)
-
-    tree.children = dict([('ELSE', ELSE)] + leafs[idx:] + nodes)
+    if nodes or leafs[idx:]:
+        ELSE = Node(is_leaf=True, X=Xmerge, y=ymerge)
+        tree.children = dict([('ELSE', ELSE)] + leafs[idx:] + nodes)
+    else:
+        tree.make_leaf(Xmerge, ymerge)
 
 
 
