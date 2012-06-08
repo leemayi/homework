@@ -1,16 +1,22 @@
 import sys
-from math import log
 import unittest
+from math import log
+
 import numpy as np
 
+
 log2 = lambda x: log(x) / log(2)
+
+TITLE = ('appid', 'prov', 'gender', 'bank')
+
+
 
 
 class Node(object):
 
-    def __init__(self, label, children={}):
-        self.label = str(label)
-        self.children = children
+    def __init__(self, label, children=None):
+        self.label = label
+        self.children = {} if children is None else children
 
     def add_child(self, label, child):
         self.children[label] = child
@@ -19,21 +25,36 @@ class Node(object):
 class Leaf(object):
 
     def __init__(self, X, y):
-        self.label = self.make_label(X, y)
+        self.X = X
+        self.y = y
+        self.calc()
 
-    def make_label(self, X, y):
-        m = y.shape[0]
+    def calc(self):
+        self.size = self.y.shape[0]
+
         max_k, max_v = None, None
-        for k, v in dist(y):
+        for k, v in dist(self.y):
             if max_v is None or v > max_v:
                 max_v = v
                 max_k = k
-        return '%s: %d%% %d%%' % (max_k, max_v*100/m, m*100/TOTAL)
+
+        self.target = max_k
+        self.dominant = max_v
+
+    @property
+    def label(self):
+        return '%s:%d%%(%d%%)_%d(%d)' % (
+            self.target,
+            self.dominant*100/self.size,
+            self.size*100/TOTAL,
+            self.dominant,
+            self.size,
+            )
 
 
 def dist(y):
     m = float(len(y))
-    return [ (val, (sum(y == val) / m)) for val in set(y) ]
+    return [ (val, sum(y == val)) for val in set(y) ]
 
 
 def entropy(y):
@@ -41,9 +62,9 @@ def entropy(y):
     return -sum([ (v/m * log2(v/m)) for k, v in dist(y) ])
 
 
-def generate_tree(X, y, ex=[], theta1=0., theta2=0.):
+def generate_tree(X, y, ex=[], theta1=0., theta2=0., indent=0):
     if len(y) <= theta1:
-        return Node('nil')
+        return Leaf(X, y)
 
     m, n = X.shape
     cur_e = entropy(y)
@@ -54,8 +75,12 @@ def generate_tree(X, y, ex=[], theta1=0., theta2=0.):
             continue
 
         col = X[:,feature]
+        values = set(col)
+        if len(values) <= 1:
+            continue
+
         e = 0
-        for val in set(col):
+        for val in values:
             idx = col == val
             e -= float(sum(idx)) / m * entropy(y[idx])
 
@@ -67,10 +92,10 @@ def generate_tree(X, y, ex=[], theta1=0., theta2=0.):
     if gain <= theta2:
         return Leaf(X, y)
 
-    n = Node(str(bestf))
+    n = Node(TITLE[bestf])
 
     for val, Xi, yi in split_by_feature(X, y, bestf):
-        child = generate_tree(Xi, yi, ex+[bestf], theta1, theta2)
+        child = generate_tree(Xi, yi, ex+[bestf], theta1, theta2, indent+1)
         n.add_child(val, child)
 
     return n
@@ -85,6 +110,21 @@ def split_by_feature(X, y, feature):
         splits.append((val, X[idx], y[idx]))
 
     return splits
+
+
+def dot(tree):
+    def _print(t):
+        if not isinstance(t, Node):
+            return
+        for elabel, child in t.children.iteritems():
+            print '  node%d [label="%s"];' % (id(t), t.label)
+            print '  node%d [label="%s"];' % (id(child), child.label)
+            print '  node%d -> node%d [label="%s"];' % (id(t), id(child), elabel)
+            _print(child)
+
+    print 'digraph {'
+    _print(tree)
+    print '}'
 
 
 class EntroyTest(unittest.TestCase):
@@ -110,7 +150,14 @@ if __name__ == '__main__':
     X, y = data[:,:-1], data[:,-1]
     TOTAL = len(y)
     
-    tree = generate_tree(X, y)
+    tree = generate_tree(X, y, theta1=TOTAL*.1)
+    dot(tree)
+
+
+
+
+
+
 
 
 
@@ -169,7 +216,6 @@ def prune2(tree, mincount):
 
 
 '''
-
 if __name__ == '__main__':
     my_data = [line.rstrip().split('\t') for line in open('data/pay_cleaned.log')]
     total = len(my_data)
@@ -184,6 +230,4 @@ if __name__ == '__main__':
 
     prune(tree, 1.)
     printtree(tree)
-
-
 '''
