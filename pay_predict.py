@@ -7,7 +7,6 @@ import numpy as np
 
 log2 = lambda x: log(x) / log(2)
 
-TITLE = ('appid', 'prov', 'gender', 'bank')
 
 
 
@@ -43,6 +42,11 @@ class Leaf(object):
 
     @property
     def label(self):
+        return '%s:%d%%(%d%%)' % (
+            self.target,
+            self.dominant*100/self.size,
+            self.size*100/TOTAL,
+            )
         return '%s:%d%%(%d%%)_%d(%d)' % (
             self.target,
             self.dominant*100/self.size,
@@ -127,6 +131,56 @@ def dot(tree):
     print '}'
 
 
+def prune_same_target(tree):
+    if not hasattr(tree, 'children'):
+        return
+
+    for child in tree.children.values():
+        prune_same_target(child)
+
+    leafs = filter(lambda i:isinstance(i[1], Leaf), tree.children.items())
+    nodes = filter(lambda i:not isinstance(i[1], Leaf), tree.children.items())
+
+    targets = set([ leaf.target for _,leaf in leafs ])
+    if len(targets) > 1:
+        return
+
+    Xmerge = np.vstack(map(lambda i:i[1].X, leafs))
+    ymerge = np.hstack(map(lambda i:i[1].y, leafs))
+    ELSE = Leaf(Xmerge, ymerge)
+
+    tree.children = dict([('ELSE', ELSE)] + nodes)
+
+
+def prune_small_branches(tree, threshold):
+    if not hasattr(tree, 'children'):
+        return
+
+    for child in tree.children.values():
+        prune_small_branches(child, threshold)
+
+    leafs = filter(lambda i:isinstance(i[1], Leaf), tree.children.items())
+    nodes = filter(lambda i:not isinstance(i[1], Leaf), tree.children.items())
+
+    if not leafs:
+        return
+    leafs.sort(lambda i,j: cmp(i[1].size, j[1].size))
+    s = 0
+    for idx, (_, leaf) in enumerate(leafs):
+        s += leaf.size
+        if s > threshold:
+            break
+    if idx < 1:
+        return
+
+    Xmerge = np.vstack(map(lambda i:i[1].X, leafs[:idx]))
+    ymerge = np.hstack(map(lambda i:i[1].y, leafs[:idx]))
+    ELSE = Leaf(Xmerge, ymerge)
+
+    tree.children = dict([('ELSE', ELSE)] + leafs[idx:] + nodes)
+
+
+
 class EntroyTest(unittest.TestCase):
 
     def test_1(self):
@@ -146,15 +200,15 @@ class EntroyTest(unittest.TestCase):
 
 if __name__ == '__main__':
     data = np.array([line.rstrip().split('\t') \
-                     for line in open('data/pay_cleaned.log')])
-    X, y = data[:,:-1], data[:,-1]
+                     for line in open('data/pay_cleaned.log.1')])
+    TITLE = data[0,:]
+    X, y = data[1:,:-1], data[1:,-1]
     TOTAL = len(y)
     
-    tree = generate_tree(X, y, theta1=TOTAL*.1)
+    tree = generate_tree(X, y, theta1=TOTAL*.05)
+    prune_small_branches(tree, TOTAL*.1)
+    prune_same_target(tree)
     dot(tree)
-
-
-
 
 
 

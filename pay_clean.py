@@ -36,8 +36,10 @@ def trans_prov(prov):
 
 
 def update_user(users, appid, amount, phone, _prov, _bank, _idnum):
-    prov = trans_prov(_prov)
-    bank = trans_bank(_bank)
+    #prov = trans_prov(_prov)
+    #bank = trans_bank(_bank)
+    prov = _prov.strip().encode('utf8')
+    bank = _bank.strip().encode('utf8')
     idnum = _idnum.strip()
     if len(idnum) == 18 and idnum[-2].isdigit():
         gender = 'F' if int(idnum[-2]) % 2 == 0 else 'M'
@@ -93,6 +95,12 @@ def trans_data():
 
         update_user(users, appid, amount, phone, prov, bank, idnum)
 
+    print '\t'.join(['APPID',
+                     'PROV',
+                     'GENDER',
+                     'BANK',
+                     'AMOUNT',
+                     ])
     for phone, user in users.iteritems():
         print '\t'.join([user['appid'],
                          user['prov'],
