@@ -26,6 +26,8 @@ clear ; close all; clc
 %  into two functions -- findClosestCentroids and computeCentroids. In this
 %  part, you shoudl complete the code in the findClosestCentroids function. 
 %
+
+if 1<0;
 fprintf('Finding closest centroids.\n\n');
 
 % Load an example dataset that we will be using
@@ -44,7 +46,7 @@ fprintf(' %d', idx(1:3));
 fprintf('\n(the closest centroids should be 1, 3, 2 respectively)\n');
 
 fprintf('Program paused. Press enter to continue.\n');
-pause;
+%pause;
 
 %% ===================== Part 2: Compute Means =========================
 %  After implementing the closest centroids function, you should now
@@ -63,7 +65,7 @@ fprintf('   [ 5.813503 2.633656 ]\n');
 fprintf('   [ 7.119387 3.616684 ]\n\n');
 
 fprintf('Program paused. Press enter to continue.\n');
-pause;
+%pause;
 
 
 %% =================== Part 3: K-Means Clustering ======================
@@ -89,11 +91,13 @@ initial_centroids = [3 3; 6 2; 8 5];
 
 % Run K-Means algorithm. The 'true' at the end tells our function to plot
 % the progress of K-Means
-[centroids, idx] = runkMeans(X, initial_centroids, max_iters, true);
+%[centroids, idx] = runkMeans(X, initial_centroids, max_iters, true);
 fprintf('\nK-Means Done.\n\n');
 
 fprintf('Program paused. Press enter to continue.\n');
-pause;
+%pause;
+
+end
 
 %% ============= Part 4: K-Means Clustering on Pixels ===============
 %  In this exercise, you will use K-Means to compress an image. To do this,
@@ -107,6 +111,7 @@ fprintf('\nRunning K-Means clustering on pixels from an image.\n\n');
 
 %  Load an image of a bird
 A = double(imread('bird_small.png'));
+%A = double(imread('brett1.jpg'));
 
 % If imread does not work for you, you can try instead
 %   load ('bird_small.mat');
