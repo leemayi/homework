@@ -5,6 +5,8 @@ from math import log
 import numpy as np
 
 
+TITLE, TOTAL = None, None
+
 log2 = lambda x: log(x) / log(2)
 
 
@@ -74,7 +76,7 @@ def generate_tree(X, y, ex=[], theta1=0., theta2=0., indent=0):
 
     m, n = X.shape
     cur_e = entropy(y)
-    min_e = float(sys.maxint)
+    bestg = 0
 
     for feature in range(n):
         if feature in ex:
@@ -88,14 +90,13 @@ def generate_tree(X, y, ex=[], theta1=0., theta2=0., indent=0):
         e = 0
         for val in values:
             idx = col == val
-            e -= float(sum(idx)) / m * entropy(y[idx])
-
-        if e < min_e:
-            min_e = e
+            e += float(sum(idx)) / m * entropy(y[idx])
+        gain = cur_e - e
+        if gain > bestg:
+            bestg = gain
             bestf = feature
 
-    gain = cur_e - min_e
-    if gain <= theta2:
+    if bestg <= theta2:
         return Node(is_leaf=True, X=X, y=y)
 
     n = Node(is_leaf=False, label=TITLE[bestf])
@@ -190,107 +191,31 @@ def prune_small_branches(tree, threshold):
 
 
 
-class EntroyTest(unittest.TestCase):
+def test():
+    global TITLE, TOTAL
+    data = np.array([line.rstrip().split() \
+        for line in open('data/play_tennis.data')])
+    TITLE = data[0,1:] 
+    X, y = data[1:,1:-1], data[1:,-1]
+    TOTAL = len(y)
 
-    def test_1(self):
-        self.assertEquals(0, entropy(np.zeros(2)))
-
-    def test_2(self):
-        self.assertEquals(1, entropy(np.array([0, 1])))
-
-    def test_4(self):
-        self.assertEquals(2, entropy(np.array([0, 1, 2, 3])))
-
-    def test_9_1(self):
-        self.assertEquals(-.9*log2(.9)-.1*log2(.1),
-                          entropy(np.array([0]*9+[1])))
+    tree = generate_tree(X, y)
+    dot(tree)
 
 
-
-if __name__ == '__main__':
+def main():
+    global TITLE, TOTAL
     data = np.array([line.rstrip().split('\t') \
-                     for line in open('data/pay_cleaned.log.1')])
+                     for line in open('data/pay_cleaned.log')])
     TITLE = data[0,:]
     X, y = data[1:,:-1], data[1:,-1]
     TOTAL = len(y)
     
     tree = generate_tree(X, y, theta1=TOTAL*.05)
-    prune_small_branches(tree, TOTAL*.1)
-    prune_same_target(tree)
+    #prune_small_branches(tree, TOTAL*.1)
+    #prune_same_target(tree)
     dot(tree)
 
 
-
-
-
-
-def classify(observation, tree):
-    if tree.results != None:
-        return tree.results
-    v = observation[tree.col]
-    branch = None
-    if isinstance(v, int) or isinstance(v, float):
-        if v >= tree.value:
-            branch = tree.tb
-        else:
-            branch = tree.fb
-    else:
-        if v == tree.value:
-            branch = tree.tb
-        else:
-            branch = tree.fb
-    return classify(observation, branch)
-
-
-def prune(tree, mingain):
-    if tree.tb.results == None:
-        prune(tree.tb, mingain)
-    if tree.fb.results == None:
-        prune(tree.fb, mingain)
-
-    if tree.tb.results != None and tree.fb.results != None:
-        tb, fb = [], []
-        for v, c in tree.tb.results.items():
-            tb += [[v]] * c
-        for v, c in tree.fb.results.items():
-            fb += [[v]] * c
-        delta = entropy(tb + fb) - (entropy(tb) + entropy(fb)) / 2
-        if delta < mingain:
-            tree.tb, tree.fb = None, None
-            tree.results = uniquecounts(tb + fb)
-
-
-def prune2(tree, mincount):
-    if tree.tb.results == None:
-        prune2(tree.tb, mincount)
-    if tree.fb.results == None:
-        prune2(tree.fb, mincount)
-
-    if tree.tb.results != None and tree.fb.results != None:
-        cnt = sum(tree.tb.results.values()) + sum(tree.fb.results.values())
-        if float(cnt) / total < mincount:
-            tb, fb = [], []
-            for v, c in tree.tb.results.items():
-                tb += [[v]] * c
-            for v, c in tree.fb.results.items():
-                fb += [[v]] * c
-            tree.tb, tree.fb = None, None
-            tree.results = uniquecounts(tb + fb)
-
-
-'''
 if __name__ == '__main__':
-    my_data = [line.rstrip().split('\t') for line in open('data/pay_cleaned.log')]
-    total = len(my_data)
-    tree = buildtree(my_data)
-    prune(tree, .05)
-    prune2(tree, .05)
-    printtree(tree)
-    drawtree(tree, 'treeview.png')
-
-    sys.exit(0)
-    printtree(tree)
-
-    prune(tree, 1.)
-    printtree(tree)
-'''
+    test()

@@ -2,44 +2,35 @@
 import sys
 
 def trans_bank(bank):
-    if bank == u'农业银行':
-        return 'BANK_NY'
-    if bank == u'建设银行':
-        return 'BANK_JS'
-    if bank == u'邮政储蓄':
-        return 'BANK_YZ'
-    if bank == u'工商银行':
-        return 'BANK_GS'
-    if bank == u'招商银行':
-        return 'BANK_ZH'
-    if bank == u'交通银行':
-        return 'BANK_JT'
-    return 'BANK_OT'
-
+    if bank in (u'农业银行', u'建设银行', u'邮政储蓄', u'工商银行', u'招商银行', u'交通银行', ):
+        return bank
+    return u'其他银行'
 
 DIST = [
-    (u'华东', 'HUA_DONG',  (u'山东', u'江苏', u'安徽', u'浙江', u'福建', u'上海')),
-    (u'华南', 'HUA_NAN',   (u'广东', u'广西', u'海南')),
-    (u'华中', 'HUA_ZHONG', (u'湖北', u'湖南', u'河南', u'江西')),
-    (u'华北', 'HUA_BEI',   (u'北京', u'天津', u'河北', u'山西', u'内蒙古')),
-    (u'西北', 'XI_BEI',    (u'宁夏', u'新疆', u'青海', u'陕西', u'甘肃')),
-    (u'西南', 'XI_NAN',    (u'四川', u'云南', u'贵州', u'西藏', u'重庆')),
-    (u'东北', 'DONG_BEI',  (u'辽宁', u'吉林', u'黑龙江')),
+    (u'华东', (u'山东', u'江苏', u'安徽', u'浙江', u'福建', u'上海')),
+    (u'华南', (u'广东', u'广西', u'海南')),
+    (u'华中', (u'湖北', u'湖南', u'河南', u'江西')),
+    (u'华北', (u'北京', u'天津', u'河北', u'山西', u'内蒙古')),
+    (u'西北', (u'宁夏', u'新疆', u'青海', u'陕西', u'甘肃')),
+    (u'西南', (u'四川', u'云南', u'贵州', u'西藏', u'重庆')),
+    (u'东北', (u'辽宁', u'吉林', u'黑龙江')),
 ]
 
 def trans_prov(prov):
-    for _, dist, plist in DIST:
+    for dist, plist in DIST:
         for p in plist:
             if prov.find(p) >= 0:
                 return dist
-    return 'PROV_OT'
+    return u'未知'
 
 
 def update_user(users, appid, amount, phone, _prov, _bank, _idnum):
-    #prov = trans_prov(_prov)
-    #bank = trans_bank(_bank)
-    prov = _prov.strip().encode('utf8')
-    bank = _bank.strip().encode('utf8')
+    if 0:
+        prov = _prov.strip()
+        bank = _bank.strip()
+    else:
+        prov = trans_prov(_prov)
+        bank = trans_bank(_bank)
     idnum = _idnum.strip()
     if len(idnum) == 18 and idnum[-2].isdigit():
         gender = 'F' if int(idnum[-2]) % 2 == 0 else 'M'
@@ -103,9 +94,9 @@ def trans_data():
                      ])
     for phone, user in users.iteritems():
         print '\t'.join([user['appid'],
-                         user['prov'],
+                         user['prov'].encode('utf8'),
                          user['gender'],
-                         user['bank'],
+                         user['bank'].encode('utf8'),
                          amount_grade(user['amount']),
 #                         str(user['amount']),
 #                         user['_prov'].encode('utf8'),
