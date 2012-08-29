@@ -9,8 +9,7 @@
 # *************************************************
 
 if [ "$ALGS4_CONFIG_SOURCED" != "true" ]; then
-
-    base=$HOME/workspace/algo-class
+    base=$(pwd)/$(dirname $0)/..
 
 	# Standard libraries
 	export CLASSPATH=$CLASSPATH:$base/stdlib.jar:$base/algs4.jar

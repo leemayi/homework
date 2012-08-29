@@ -11,7 +11,8 @@
 FINDBUGS=findbugs-?.?.?
 
 # This must match the specified install directory
-INSTALL=~/workspace/algo-class
+base=$(dirname $0)/..
+INSTALL=$base
 
 # This is the bin directory
 BIN=bin
