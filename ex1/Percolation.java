@@ -11,8 +11,8 @@ public class Percolation {
         uf = new WeightedQuickUnionUF(n*n+2);
 
         for (int j = 1; j <= n; j++) {
-            union(top, 1, j);
-            union(bottom, n, j);
+            uf.union(top, xyTo1D(1, j)+2);
+            uf.union(bottom, xyTo1D(n, j)+2);
         }
     }
 
@@ -25,13 +25,13 @@ public class Percolation {
         openState[xyTo1D(i, j)] = true;
 
         if (i > 1 && isOpen(i-1, j)) // top
-            union(i, j, i-1, j);
-        else if (i < n && isOpen(i+1, j)) // bottom
-            union(i, j, i+1, j);
-        else if (j > 1 && isOpen(i, j-1)) // left
-            union(i, j, i, j-1);
-        else if (j < n && isOpen(i, j+1)) // right
-            union(i, j, i, j+1);
+            unionTwoSites(i, j, i-1, j);
+        if (i < n && isOpen(i+1, j)) // bottom
+            unionTwoSites(i, j, i+1, j);
+        if (j > 1 && isOpen(i, j-1)) // left
+            unionTwoSites(i, j, i, j-1);
+        if (j < n && isOpen(i, j+1)) // right
+            unionTwoSites(i, j, i, j+1);
     }
 
     public boolean isOpen(int i, int j) {
@@ -57,10 +57,7 @@ public class Percolation {
             throw new IndexOutOfBoundsException("row index i out of bounds");
     }
 
-    private void union(int i1, int j1, int i2, int j2) {
+    private void unionTwoSites(int i1, int j1, int i2, int j2) {
         uf.union(xyTo1D(i1, j1)+2, xyTo1D(i2, j2)+2);
-    }
-    private void union(int p, int i, int j) {
-        uf.union(p, xyTo1D(i, j)+2);
     }
 }
