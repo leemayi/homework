@@ -8,7 +8,7 @@ public class PercolationStats {
         fractions = new double[T];
 
         for (int i = 0; i < T; i++) {
-            double frac = oneTime() / (N * N);
+            double frac = (double) oneTime() / (N * N);
             fractions[i] = frac;
         }
     }
@@ -21,9 +21,9 @@ public class PercolationStats {
         return StdStats.stddev(fractions);
     }
 
-    private double oneTime() {
+    private int oneTime() {
         Percolation perc = new Percolation(N);
-        double sitesOpened = 0;
+        int sitesOpened = 0;
 
         while (!perc.percolates()) {
             int i = rand();
@@ -50,9 +50,15 @@ public class PercolationStats {
         double std = stat.stddev();
         double left = mean - 1.96 * std / Math.sqrt(T);
         double right = mean + 1.96 * std / Math.sqrt(T);
+        int leftN = (int) (N * N * left);
+        int rightN = (int) (N * N * right);
 
-        StdOut.printf("%23s = %f\n", "mean", mean);
-        StdOut.printf("%23s = %f\n", "stddev", std);
-        StdOut.printf("%23s = %f, %f\n", "95% confidence interval", left, right);
+        StdOut.printf("%-23s = %f\n", "mean", mean);
+        StdOut.printf("%-23s = %f\n", "stddev", std);
+        StdOut.printf("%-23s = %f, %f\n", "95% confidence interval",
+            left, right);
+        StdOut.printf("\nN: %d, T: %d\n", N, T);
+        StdOut.printf("Total: %d, open sites [%d, %d]\n",
+            N*N, leftN, rightN);
     }
 }
