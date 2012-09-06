@@ -4,6 +4,16 @@ excises for algo class
 https://class.coursera.org/algs4partI-2012-001/class/index
 
 
+API reference of stdlib.jar
+----
+http://algs4.cs.princeton.edu/code/index.php#stdlib
+
+
+API reference of algs4.jar
+----
+http://algs4.cs.princeton.edu/code/index.php
+
+
 Programming Assignment 1: Percolation — Instructions
 ----
 http://coursera.cs.princeton.edu/algs4/assignments/percolation.html
