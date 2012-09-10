@@ -10,7 +10,7 @@ public class Subset {
             q.enqueue(item);
         }
 
-        for (int i=0; i<k && !q.isEmpty(); ++i)
+        for (int i = 0; i < k && !q.isEmpty(); ++i)
             StdOut.printf("%s\n", q.dequeue());
     }
 }

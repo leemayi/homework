@@ -6,27 +6,30 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
     private Item[] a;
     private int N;
 
-    public RandomizedQueue() {           // construct an empty randomized queue
+    public RandomizedQueue() {
         a = (Item[]) new Object[2];
     }
 
-    public boolean isEmpty() {           // is the queue empty?
+    public boolean isEmpty() {
         return N == 0;
     }
 
-    public int size() {                  // return the number of items on the queue
+    public int size() {
         return N;
     }
 
-    public void enqueue(Item item) {     // add the item
+    public void enqueue(Item item) {
+        if (item == null)
+            throw new NullPointerException("Adding null item to queue");
+        
         if (N == a.length)
             resize(2*a.length);
         a[N++] = item;
     }
 
-    public Item dequeue() {              // delete and return a random item
+    public Item dequeue() {
         if (isEmpty())
-            throw new RuntimeException("random queue is empty");
+            throw new NoSuchElementException("random queue is empty");
 
         int idx = pick(N);
         Item item = a[idx];
@@ -40,13 +43,13 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         return item;
     }
 
-    public Item sample() {               // return (but do not delete) a random item
+    public Item sample() {
         if (isEmpty())
-            throw new RuntimeException("random queue is empty");
+            throw new NoSuchElementException("random queue is empty");
         return a[pick(N)];
     }
 
-    public Iterator<Item> iterator() {   // return an independent iterator over items in random order
+    public Iterator<Item> iterator() {
         return new RandomIterator();
     }
 
@@ -92,6 +95,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 
     public static void main(String[] args) {
         RandomizedQueue<String> q = new RandomizedQueue<String>();
+
         while (!StdIn.isEmpty()) {
             String item = StdIn.readString();
 
