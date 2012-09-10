@@ -122,5 +122,13 @@ public class Deque<Item> implements Iterable<Item> {
                 StdOut.printf("%s ", s);
             StdOut.println("]");
         }
+
+        Deque<String> d2 = new Deque<String>();
+        d2.addLast("a");
+        d2.addLast("b");
+        for (String i : d2)
+            for (String j : d2)
+                StdOut.printf("(%s, %s) ", i, j);
+        StdOut.println();
     }
 }
