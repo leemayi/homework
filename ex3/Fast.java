@@ -1,13 +1,7 @@
 import java.util.Arrays;
 
 public class Fast {
-    private Point[] points;
-
-    public Fast(Point[] points) {
-        this.points = points;
-    }
-
-    public void solve(boolean draw) {
+    private void solve(Point[] points) {
         int N = points.length;
 
         Point[] other = new Point[N];
@@ -34,14 +28,10 @@ public class Fast {
                     end = j;
                 else {
                     if (end - start >= 2 && p.compareTo(other[start]) <= 0) {
-                        if (draw)
-                            p.drawTo(other[end]);
-                        else {
-                            StdOut.printf("%s", p);
-                            for (int k = start; k <= end; ++k)
-                                StdOut.printf(" -> %s", other[k]);
-                            StdOut.printf("\n");
-                        }
+                        StdOut.printf("%s", p);
+                        for (int k = start; k <= end; ++k)
+                            StdOut.printf(" -> %s", other[k]);
+                        StdOut.printf("\n");
                     }
                     start = j;
                 }
@@ -50,14 +40,10 @@ public class Fast {
             }
 
             if (end == N-1 && end-start >= 2 && p.compareTo(other[start]) <= 0) {
-                if (draw)
-                    p.drawTo(other[end]);
-                else {
-                    StdOut.printf("%s", p);
-                    for (int k = start; k <= end; ++k)
-                        StdOut.printf(" -> %s", other[k]);
-                    StdOut.printf("\n");
-                }
+                StdOut.printf("%s", p);
+                for (int k = start; k <= end; ++k)
+                    StdOut.printf(" -> %s", other[k]);
+                StdOut.printf("\n");
             }
         }
     }
@@ -74,7 +60,7 @@ public class Fast {
             points[i] = new Point(x, y);
         }
 
-        Fast fast = new Fast(points);
-        fast.solve(false);
+        Fast fast = new Fast();
+        fast.solve(points);
     }
 }

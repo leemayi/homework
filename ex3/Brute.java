@@ -1,11 +1,5 @@
 public class Brute {
-    private Point[] points;
-
-    public Brute(Point[] points) {
-        this.points = points;
-    }
-
-    public void solve(boolean draw) {
+    private void solve(Point[] points) {
         int N = points.length;
 
         for (int i = 0; i < N; i++) {
@@ -29,10 +23,7 @@ public class Brute {
                         if (pq != ps)
                             continue;
 
-                        if (draw)
-                            p.drawTo(s);
-                        else
-                            StdOut.printf("%s -> %s -> %s -> %s\n", p, q, r, s);
+                        StdOut.printf("%s -> %s -> %s -> %s\n", p, q, r, s);
                     }
                 }
             }
@@ -52,7 +43,7 @@ public class Brute {
             points[i] = new Point(x, y);
         }
 
-        Brute brute = new Brute(points);
-        brute.solve(false);
+        Brute brute = new Brute();
+        brute.solve(points);
     }
 }
