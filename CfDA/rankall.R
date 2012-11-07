@@ -5,6 +5,7 @@ rankall <- function(outcome_param, num = "best") {
     HEART_FAILURE <- 17
     PNEUMONIA <- 23
     HOSPITAL_NAME <- 2
+    STATE <- 7
 
     if (outcome_param == "heart attack") {
         col = HEART_ATTACK
@@ -20,7 +21,6 @@ rankall <- function(outcome_param, num = "best") {
         group[1]
     }
 
-    groups = split(outcome, outcome$State)
-    lapply(groups, rank)
+    tapply(outcome, outcome$State, rank)
 }
 
