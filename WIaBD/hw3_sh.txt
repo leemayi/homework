@@ -1,0 +1,45 @@
+$ grep 'Alberto Pettorossi' * | awk -F':::' '{print $NF}' | xargs -n1 | tr -d '.,:' | sort -i | uniq -ic | sort -nr
+      3 Program
+      3 of
+      2 Using
+      2 Transforming
+      2 Transformation
+      2 Programs
+      2 Logic
+      2 for
+      1 Verification
+      1 to
+      1 Synthesis
+      1 Strategy
+      1 State
+      1 Sets
+      1 Processes
+      1 Predicates
+      1 Parallelism
+      1 Observers
+      1 Lambda
+      1 Infinite
+      1 Inductive
+      1 in
+      1 Future
+      1 Experiments
+      1 Eureka
+      1 Directions
+      1 Development
+      1 Developing
+      1 Definitions
+      1 Comprehensive
+      1 Approach
+      1 and
+      1 An
+      1 Agents
+      1 Abstraction
+      1 Abstract
+      1 a
+
+
+$ time python hw3.py | sort -k1,2 -nr > hw3_result.txt 
+real    0m33.936s
+user    0m32.426s
+sys 0m0.668s
+
