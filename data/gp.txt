@@ -1,0 +1,145 @@
+$ python gp.py
+22271
+16732
+4165
+2774
+2669
+2662
+2653
+2653
+2653
+2653
+2175
+2154
+1563
+915
+915
+834
+749
+572
+288
+167
+162
+162
+24
+4
+0
+add
+ multiply
+  p0
+  add
+   isgreater
+    isgreater
+     p1
+     multiply
+      if
+       multiply
+        p1
+        p1
+       add
+        2
+        add
+         6
+         p0
+       10
+      p0
+    p0
+   add
+    3
+    p0
+ add
+  add
+   p1
+   isgreater
+    add
+     add
+      add
+       if
+        7
+        8
+        p0
+       add
+        p0
+        p0
+      9
+     1
+    isgreater
+     7
+     if
+      subtract
+       p0
+       p0
+      isgreater
+       p0
+       multiply
+        if
+         10
+         if
+          p0
+          add
+           p1
+           p0
+          if
+           7
+           if
+            if
+             add
+              p0
+              p0
+             p0
+             isgreater
+              p1
+              add
+               p1
+               9
+            10
+            p0
+           isgreater
+            5
+            multiply
+             subtract
+              p1
+              p0
+             7
+         4
+        multiply
+         add
+          multiply
+           p0
+           add
+            p0
+            6
+          isgreater
+           subtract
+            p1
+            1
+           isgreater
+            p0
+            2
+         multiply
+          p0
+          isgreater
+           10
+           p0
+      if
+       p1
+       if
+        p0
+        subtract
+         p0
+         subtract
+          multiply
+           p1
+           p1
+          p0
+        multiply
+         multiply
+          p1
+          isgreater
+           9
+           p0
+         0
+       p1
+  add
+   4
+   p1
