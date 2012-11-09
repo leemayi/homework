@@ -1,0 +1,197 @@
+#coding: utf8
+import time
+import random
+
+
+
+def find_one_missing():
+    bits = 8
+    m = 235
+    sample=random.sample(xrange(2**bits), m)
+
+    def iter_(data, i):
+        if not data:
+            return 0
+        if i == 0:
+            return 0 if (data[0] & 1) else 1
+        half0, half1 = [], []
+        for n in data:
+            if n & (1<<i):
+                half1.append(n)
+            else:
+                half0.append(n)
+        if len(half0) < len(half1):
+            return iter_(half0, i-1)
+        return (1<<i) + iter_(half1, i-1)
+
+    n = iter_(sample, bits-1)
+    if bits < 5:
+        print sample
+    print n, (n in sample)
+
+
+def sampling(data, m):
+    '''已知规模抽样'''
+    size = len(data)
+    if (size < m or m < 0):
+        return
+    
+    for i in range(size):
+        f = random.random()
+        if (f <= float(m)/(size-i)):
+            yield data[i]
+            m -= 1
+            if m < 1:
+                break
+
+def sampling2(stream, m):
+    '''水库：未知规模抽样'''
+    ret = [ stream.next() for _ in range(m) ]
+    for i, n in enumerate(stream):
+        if random.random() < float(m)/(i+m+1):
+            ret[int(random.random()*m)] = n
+    for j in ret:
+        yield j
+
+last = None
+def naive_rand(seed=None):
+    global last
+    if seed:
+        last = seed
+    if not last: # not None, and not zero
+        last = time.time()
+    s = '%d'%(last**2)
+    mid = len(s)/2
+    last = int(s[mid-5:mid+5])
+    return last
+
+def rand_pick_smoking():
+    cnt = dict(zip(xrange(10), [0]*10))
+    sample = xrange(10)
+
+    for i in xrange(100000):
+        for j in get_rand_unknown_size(iter(sample), 4):
+            cnt[j] += 1
+
+    for i, c in cnt.items():
+        print i, c
+
+def preorder(tree):
+    if not tree:
+        return
+
+    yield tree.data
+
+    if tree.left:
+        preorder(tree.left)
+    if tree.right:
+        preorder(tree.left)
+
+def preorder_nonrecursive(tree):
+    stack
+    stack.push(tree)
+
+    while stack:
+        node = stack.pop()
+        yield node.data
+        if node.left:
+            stack.push(node.left)
+        if node.right:
+            stack.push(node.right)
+
+def shuffle(data):
+    size = len(data)
+    for i in xrange(size):
+        j = int(random.random()*(size-i))
+        data[j], data[size-i-1] = data[size-i-1], data[j]
+    return data
+
+def test_shuffle():
+    data = range(10)
+    occur = dict([(pos, dict([(i,0) for i in data]))
+        for pos in data])
+
+    for _ in xrange(100000):
+        shuffle(data)
+        for i, n in enumerate(data):
+            occur[i][n] += 1
+
+    for pos, occ in occur.iteritems():
+        print 'position', pos
+        for num, cnt in occ.iteritems():
+            print num, ':', cnt
+            
+
+if __name__ == '__main__':
+    test_shuffle()
+
+
+'''
+1>一串首尾相连的珠子(m个)，有N种颜色(N《=10)，设计一个算法，取出其中一段，要求包含所有N中颜色，并使长度最短。并分析时间复杂度与空间复杂度。
+2>从1到1亿，所有出现的数字的和(125=1+2+5)，手工计算机出来;
+
+有一个监控系统，有大量的数据记录包括{url,用户访问ip,时间｝，要对这个监控系统进行维护，并提供查询。
+设计一个能存储和维护1000亿条记录，实时监控，并支持一下两种查询：
+1. 指定任意一个时间段(精确到分钟)和某个url,查处这个时间段内的所有url的访问总量。
+2. 指定任意一个时间段(精确到分钟)和某个ip,查询这个时间段内的ip访问总量。
+
+1. 有一个任务执行机，任务数N<1000，该机器每次只能执行一个任务，而任务之间存在依赖关系，
+但是任务之间没有循环依赖，请给出适当的任务执行顺序。算法、伪代码，并分析其时间复杂度和
+空间复杂度。
+2. 编写函数，统计在某段英文文本中完整句子的数目，文本中只包括大小写字母，空格，点好(.)，逗号(,)。
+完整的句子必须包含至少一个字母并以点号，结束。
+
+四个骰子，都没有写数字，请你设计一个数字的写法，使得这四个骰子可以表示出一年365天的任一天
+
+给一个链表，长度不知道，判断是否有环
+
+找数列中的第k大的数字的算法。
+
+有两个队列，实现一个栈
+
+ 一个入口，一个出口。插入节点使路径相同
+
+大于6的偶数都可以分为两个素数之和
+
+输出6~100000只间能表示两个素数之和的
+
+key value 每条记录为1024字节，  内存10G ，磁盘不限。设计查询存储结构
+
+1.写出你知道的5种排序算法的平均时间复杂度
+2.有一个链表类似于78912345，是从第四个位置1开始递增有序，问怎么实现查找。
+3.求出只包含质因数2,3,5的数据，例如2 3 5 8 9 12 15等，输出前N项（N>10000）
+4.有一个key值和value值对应，请编写一个检索系统，实现单线程修改，多线程查询。
+
+最小堆问题，写堆插入和取堆顶后的调整函数
+
+一个百万词条，如何设计一个有效的hash函数（还要区分大小写）？
+对于 unsigned int 32位hase值 , 如果词条区分大小写(52个)
+保证hash不重复的字符最大长度 = log(52, pow(2,32)) = 5.6136 单词最大长度 5个字符, 显然不行
+不是想不重复，而是想让它最大冲突数在15以内。不知道实现起来复杂不复杂。
+
+谈一下static关键词，C&C++：文件域，函数域，类域
+说说volatile
+static成员（变量/函数，尤其是变量）需要注意哪些问题：static变量需在类外，通常为.cpp文件中显式声明，否则会有链接错误
+STL由哪些部件组成：容器，迭代器，算法，仿函数，各类适配器等等
+STL标准容器有哪些，特性是什么：vector，deque, list, map/multimap, set/multiset
+vector的插入操作过程中会发生什么：内存分配/重分配/释放，元素构造/析构……
+谈谈对适配容器的理解：stack, queue, priority_queue，对标准容器的适配/封装
+谈谈C++
+进程间通讯有哪些方式：内存共享，socket（包括Unix Domain），消息
+两相同行数文件，每行一列，使用awk按列合并之： awk ‘{t = $1; getline <"file2"; print t, $1}' file2
+你该如何实现tail命令：lseek, read, write….
+实现atoi：指针有效性，字符有效性，整数溢出，错误状态
+memcpy与memmove有何区别：overlap
+列出你所知道的排序方法及其复杂度、稳定性和适用情形
+* 非递归实现快速排序
+* 快速排序的复杂度证明
+非递归实现二叉树的后续遍历
+* 判断单链表是否存在环，环从何开始：老题了
+仅知道单链表中某非尾节点的地址，O(1)删除该节点：节点覆盖
+某文件大小为10G，每行保存一个整数，内存不可完全容纳，排序之：分段排序，然后败者树归并
+* 简单描述虚拟内存机制
+* 简单描述Linux进程模型（即包含哪些段，作用是什么，有何特性）
+软、硬链接有何区别
+一个系统，维护id->value的信息，信息量巨大，需多台服务器存储。系统可支持信息的增、删、改、查询及批量查询，每日增删该约千万次，查询约10亿次。设计该系统
+'''
+
