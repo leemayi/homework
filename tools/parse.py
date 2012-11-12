@@ -1,0 +1,48 @@
+import os
+import re
+from BeautifulSoup import BeautifulSoup as BS
+
+
+
+def esc(txt):
+    txt = txt.strip()
+    txt = re.sub(r'[^a-zA-Z0-9_]', '_', txt)
+    txt = re.sub(r'_+', '_', txt)
+    txt = txt.strip('_')
+    return txt
+
+
+CMD = '''wget --no-cookies --header "Cookie: $(cat cookies.txt)" '%s' -O '%s' '''
+
+def parse():
+    soup = BS(open('index').read())
+    for item in soup.findAll('a', 'list_header_link'):
+        section = esc(item.find('h3').string)
+        ul = item.nextSibling
+
+        print 'echo "downloading %s"' % section
+        print 'mkdir -p %s' % section
+        for lecture_link in ul.findAll('a', 'lecture-link'):
+            links = lecture_link.parent.find('div', 'item_resource').findAll('a')
+            script_link = links[-2]
+            download_link = links[-1]
+
+            title = esc(lecture_link.next)
+
+            href = download_link['href'] 
+            subfix = os.path.basename(href).split('?', 1)[0].split('.')[-1]
+            fname = os.path.join(section, '%s.%s' % (title, subfix))
+
+            shref = script_link['href']
+            sfname = os.path.join(section, '%s.srt' % (title))
+
+            print '''if [ ! -e "%s" ]; then
+    wget --no-cookies --header "Cookie: $(cat cookies.txt)" '%s' -O '%s'
+    wget --no-cookies --header "Cookie: $(cat cookies.txt)" '%s' -O '%s'
+fi''' % (fname,
+    href, fname,
+    shref, sfname,
+    )
+            print
+
+parse()
