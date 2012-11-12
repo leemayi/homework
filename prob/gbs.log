@@ -1,0 +1,3147 @@
+Zhang Qiang
+pristine-tar import support and update dependency
+
+
+[[END]]
+Markus Lehtonen
+Support for configurable packaging directory
+
+Add config file parameter and command line option to specify the
+packaging directory. Command line option takes preference over the
+config file setting.
+
+
+[[END]]
+Ed Bartosh
+Fixed empty response crash
+
+Sometimemes OBS returns empty response without raising any exceptions.
+remove_files API tries to parse this response as xml and crashing if
+it's empty. It happens not very often, so trying 3 times to get
+something parseable should work around this OBS bug.
+
+Fixes: #495
+
+
+[[END]]
+Ed Bartosh
+Implemented uploading only changed files to OBS
+
+Before uploading local files to OBS remotebuild code now checks if it's
+really needed. Only new and changed files are uploaded. Old files are
+deleted from OBS project.
+
+This change also reorganizes remotebuild code a bit to avoid repeated
+queries to OBS.
+
+Fixes: #474
+
+
+[[END]]
+Zhang Qiang
+bump to version gbs 0.11
+
+
+[[END]]
+Huang Hao
+Fix typos. #497
+
+
+[[END]]
+Zhang Qiang
+Update dependency for gbs 0.11
+
+* depanneur >= 0.2
+* tizen-gbp-rpm >= 2012.10.25
+* osc >= 0.136.0
+
+
+[[END]]
+Huang Hao
+Change default repo config. Fix #488
+
+* change default repo from snapshots to releases
+* comment repos of base and main
+
+
+[[END]]
+Zhang Qiang
+fix backtrace while trying to remove 'None' file, #490
+
+
+[[END]]
+Qiang Z Zhang
+Merge "guess_spec() should return a spec belonging to given project" into devel
+[[END]]
+Zhang Qiang
+depend osc-0.136
+
+
+[[END]]
+Huang Hao
+guess_spec() should return a spec belonging to given project
+
+Fix #483
+
+
+[[END]]
+Zhang Qiang
+Add two more usage example for gbs build
+
+
+[[END]]
+Zhang Qiang
+Don't show generating src rpm info if no --source-rpm
+
+
+[[END]]
+Zhang Qiang
+Revert "Revert "Implement build --spec. Fix #386""
+
+This reverts commit e72f7f2c49239e09d98b6cea96ce9a0d84be45eb.
+
+After more discussion, we'd prefer to keep the current implementation
+just like gbs 0.9. Fix all --commit / --include-all issue in next
+gbs release.
+
+
+[[END]]
+Zhang Qiang
+Merge "Remove checking of target project, fix #475" into devel
+[[END]]
+Dawei Yang
+raise an ObsError if SSL verification failed
+
+[[END]]
+Zhang Qiang
+Remove checking of target project, fix #475
+
+If no permission to create target project, gbs return:
+error <obs>: Can't set meta for Tools:Devel1: HTTP Error 403:  Forbidden
+Without this patch, gbs rb can only create target project with name start
+with home, which does not make sense.
+
+
+[[END]]
+Zhang Qiang
+Revert "Implement build --spec. Fix #386"
+
+This reverts commit 9c3e0e1683a39752a86f34166aacec5a103bd662.
+
+[[END]]
+Huang Hao
+Implement build --spec. Fix #386
+
+Pass the spec file to depanneur, it will only build that file.
+
+
+[[END]]
+Qiang Z Zhang
+Merge "submit: fixes to target guessing logic" into devel
+[[END]]
+Qiang Z Zhang
+Merge "Cleaned up runtime package dependencies" into devel
+[[END]]
+Ed Bartosh
+Cleaned up runtime package dependencies
+
+Gbs doesn't depend on rpm directly since it started to use
+git-buildpackage. It doesn't depend on build since it started to use
+depanneur. It doesn't depend on createrepo since local build mode was
+dropped in favor of using depanneur. Binfmt-support and qemu are not
+used at all. Dependency to python-pycurl was missing in debian/control.
+Dependency to python >= 2.5 was replaced with dependency to
+python >= 2.7 as gbs now uses argparse.
+
+
+[[END]]
+Markus Lehtonen
+submit: fixes to target guessing logic
+
+Try to find the upstream branch of the current branch, not the target.
+
+Also, get rid of the confusing variable name 'target_branch' as we're
+not submitting to any branch - the 'target' is just one part of the tag
+name.
+
+
+[[END]]
+Markus Lehtonen
+submit: fix crash in guessing remote in case upstream is not set
+
+
+[[END]]
+Zhang Qiang
+Remove setup qemu env code, fix #466
+
+this work should be done in build script.
+
+also remove dependency of qemu-arm-static, which should depend by
+build.
+
+
+[[END]]
+Markus Lehtonen
+submit: try to guess the remote server
+
+If the current branch has upstream set, use it's remote as the server to
+push to. Only uses 'origin' as default if no upstream is set.
+
+
+[[END]]
+Qiang Z Zhang
+Merge "Make build/remotebuild profile selectable from cmdline" into devel
+[[END]]
+Qiang Z Zhang
+Merge "Unify color of debug message in gbs, gbp and depanneur." into devel
+[[END]]
+Markus Lehtonen
+Make build/remotebuild profile selectable from cmdline
+
+Implements a new cmdline option to select the profile to use for
+building. User can give the profile name without the "profile." prefix.
+
+
+[[END]]
+Markus Lehtonen
+Make local buildroot configurable in config file
+
+The buildroot can be set under the 'general' section as a global setting
+and/or under individual profiles as a profile-wide setting.
+
+Setting supports string substitution for ${tmpdir} and ${profile}.
+
+
+[[END]]
+Zhang Qiang
+Merge "empty commit message is not allowed for gbs submit, #468" into devel
+[[END]]
+Zhang Qiang
+Merge "More correct way to parse repo url" into devel
+[[END]]
+Qiang Z Zhang
+Merge "Fixed bug in command line aliases implementation" into devel
+[[END]]
+Zhang Qiang
+empty commit message is not allowed for gbs submit, #468
+
+
+[[END]]
+Huang Hao
+Unify color of debug message in gbs, gbp and depanneur.
+
+Fix #450.
+
+
+[[END]]
+Zhang Qiang
+More correct way to parse repo url
+
+Only continue with PageNotFound exception, other exceptions, such as
+AuthFailed, TimeoutError, UrlError, raise exception and exit directly.
+
+
+[[END]]
+Ed Bartosh
+Fixed bug in command line aliases implementation
+
+If --conf global option is used its argument considered as subcommand
+name. This change fixes this.
+
+
+[[END]]
+Ed Bartosh
+Fixed getting workdir in remotebuild mode
+
+Used the same approach as in other modules: workdir is assigned to git
+topdir.
+
+Fixes: #464
+
+
+[[END]]
+Qiang Z Zhang
+Merge "Used guess_spec in changelog mode" into devel
+[[END]]
+Ed Bartosh
+Used guess_spec in changelog mode
+
+This change fixes confusing behaviour of changelog mode. When there are
+more than one .spec file in packaging/ directory first one is picked up
+for processing. Users were confused, because there was not way to
+understand which spec will be used and there was not way to specify spec
+to proceed with.
+
+Fixes: #399
+
+
+[[END]]
+Zhang Qiang
+check the existance of 'source_rpm' before using it
+
+
+[[END]]
+Ed Bartosh
+Implemented command line parsing using argparse
+
+Fixes: #259
+
+
+[[END]]
+Markus Lehtonen
+cmd_export: use gbp to build src rpm
+
+Fixes #396
+
+
+[[END]]
+Markus Lehtonen
+Don't rely on absolute path of Depanneur
+
+
+[[END]]
+Zhang Qiang
+Use os.system to ignore INT/QUIT signal while calling depanneur
+
+subprocess.call does not ignore INT/QUIT signal, which result in
+gbs exit first before depanneur finished
+
+
+[[END]]
+Markus Lehtonen
+Better help text for --upstream-tag option
+
+See #379.
+
+
+[[END]]
+Markus Lehtonen
+export: handle new gbp return value
+
+GBP now distinguishes tarball/patch generation errors from other errors.
+Fixes a problem where GBS thought that all GBP errors where related to
+tarball/patch generation, and, possibly printed a misleading warning and
+re-tried GBP export in vain.
+
+See #382.
+
+
+[[END]]
+Huang Hao
+Repo or OBS section can inherit only user or password from profile.
+
+- Fix #387, add test cases for this.
+- inline user/password have the hight priority.
+
+
+[[END]]
+Zhang Qiang
+Check the format of build conf
+
+build conf must end with .conf and can't contain '-'.
+
+
+[[END]]
+Huang Hao
+Format default config template.
+
+- Add more comments and two tizen url to default config template.
+- Remove useless config item buildconf and build_cmd
+
+
+[[END]]
+Zhang Qiang
+Check if specified build conf exists.
+
+
+[[END]]
+Huang Hao
+Use abspath for build.conf.
+
+
+[[END]]
+Zhang Qiang
+Correct setting gbs build root order
+
+--buildroot option first, then TIZEN_BUILD_ROOT env var, and last
+choice ~/GBS-ROOT/, which is the default.
+
+
+[[END]]
+Qiang Z Zhang
+Merge "patch-generation: filter out changes to packaging dir" into release-0.10
+[[END]]
+Markus Lehtonen
+patch-generation: filter out changes to packaging dir
+
+Utilize the ignore-path functionality of git-buildpackage to ignore
+changes made to the packaging files when generating patches.
+
+
+[[END]]
+Zhang Qiang
+Update gbs version from source
+
+This affect output of gbs --version
+
+
+[[END]]
+Zhang Qiang
+Update gbs build help info use build instead of localbuild
+
+
+[[END]]
+Zhang Qiang
+Don't use local build conf, give error msg instead
+
+local build conf is out of date, and should be discarded.
+
+
+[[END]]
+Zhang Qiang
+Merge "transfer correct gbs export options to depanneur" into release-0.10
+[[END]]
+Huang Hao
+Small changes to usage format
+
+
+[[END]]
+Zhang Qiang
+transfer correct gbs export options to depanneur
+
+
+[[END]]
+Zhang Qiang
+bump to version 0.10
+
+This commit is for new gbs 0.10 release branch (release-0.10).
+
+
+[[END]]
+Zhang Qiang
+Update chroot module
+
+As depanneur is used to create build, and multiple build root will
+be created if --threads=<> specified, so we remove -A option.
+The build root should be specified while using gbs chroot, just as
+chroot command.
+
+
+[[END]]
+Zhang Qiang
+Use build-experimental to replace build module
+
+We have tested new new build module 'build-experimental' for several
+circles, and its compartiable with build module, no any regression
+issue, so let's use this module to replace current build module.
+
+
+[[END]]
+Zhang Qiang
+use 'warning' instead of 'warn'
+
+
+[[END]]
+Zhang Qiang
+show local repo dir with correct disto and show build root dir
+
+* show correct local repo dir: for different ditros(tizen, tizen2.0,
+ect) different local repos are generated.
+* show build root dirs, user can see this info and chroot it easily.
+
+
+[[END]]
+Qiang Z Zhang
+Merge "Add a default parser in ConfigMgr" into devel
+[[END]]
+Huang Hao
+Add a default parser in ConfigMgr
+
+- Fix bug#333.
+- Change config item like %(xxx)s to ${xxx} in DEFAULTS
+    dict, otherwise InterpolationError will be raised
+- Transform ${upstream_tag} back to %(upstream_tag)s before
+    calling gbp, which does not change functionality of gbp
+
+
+[[END]]
+Qiang Z Zhang
+Merge "Display meaningful info when parsing repo urls" into devel
+[[END]]
+Huang Hao
+Display meaningful info when parsing repo urls
+
+Fix bug#340
+
+
+[[END]]
+Zhang Qiang
+Add more description about gbs build-experimental help info fix#350
+
+
+[[END]]
+Zhang Qiang
+Add --buildroot option for chroot to chroot specified dir
+
+
+[[END]]
+Zhang Qiang
+Update packaging files
+
+* Update dependency:
+  build 2012.09.12
+  gbp:  0822
+  depanneur: 0.1
+* Update Makefile:
+  dsc depend on tarball
+
+
+[[END]]
+Huang Hao
+Catch ConfigParser.Error when reading config
+
+
+[[END]]
+Huang Hao
+Change error message showed to user.
+
+- show user the correct message if section name specified by
+    general.profile does not exist
+- remove default value of remotebuild.build_server in code. if
+    there is no [remotebuild] section in config file, gbs rb will
+    do remote build with tizen.org. It's wried to user.
+- complain no obs api found when running gbs rb, do not complain
+    when parsing config file.
+
+
+[[END]]
+Markus Lehtonen
+conf: fix bug in config template generation
+
+Use shutil.move() instead of os.rename() which fails if the template
+file would be renamed over file system boundaries.
+
+
+[[END]]
+Markus Lehtonen
+Support squashing patches in patch generation
+
+Add new command line and config file option to squash commits in patch
+generation into a one monolithic diff. One usage example could be e.g.
+in linux kernel to squash commits between base version and stable branch
+head into one .diff.
+
+This patch directly facilitates git-buildpackage and just passes the new
+option to it.
+
+Command line option takes preference over the config file.
+
+
+[[END]]
+Zhang Qiang
+first version of localbuild integrated with depanneur
+
+Available features:
+* multiple packages build
+* parallel build with multiple threads
+* dependency build automaticlly
+* local repo generated
+
+Already implemented depanneur options:
+* --clean, --clean-once, --overwrite
+* --incremental, --keepgoing, --no-configure
+* --exclude, --exclude-from-file
+* --thread
+* --binary-list
+* --debug
+
+Usage Example:
+$ mkdir tizen-packages
+$ cp package1 package2 package3 ... tizen-packages/
+$ gbs localbuild -A ia32 tizen-packages # build all packages under tizen-packages
+$ cd tizen-packages/
+$ gbs localbuild -A ia32 # build all packages under current dir
+$ gbs localbuild -A ia32 --overwrite --include-all
+$ gbs localbuild -A i586 --threads=2
+$ gbs localbuild -A i586 --threads=2 --exclude=dlog --exclude=eglibc
+$ gbs localbuild -A i586 --threads=4 --binary-list=/path/to/pkgs.list
+$ cd package1/
+$ gbs localbuild -A i586 --incremental # only support build one package
+
+
+[[END]]
+Qiang Z Zhang
+Merge "More changes to support profile style of config." into devel
+[[END]]
+Huang Hao
+More changes to support profile style of config.
+
+- proflie section header should start with "proflie_", obs
+    section header should start with "obs_", repo section
+    header should start with "repo_".
+- add base_prj and target_prj config to obs section
+- generate profile style of config file in ~/.gbs.conf if no
+    config file were found
+- clean all parsers in function reset_from_conf()
+- as described in issue#255, remove config file in cwd
+- if current config is subcommand oriented style, convert it to
+    profile oriented style into ~/.gbs.conf.template. Leave it
+    original config file unchange.
+- BrainConfigParser.set() is not compatible with super set, so
+    change name to set_into_file()
+- add class RepoConf and OBSConf to repo section info and obs
+    section info, including section name which is useful for
+    auto new style config generation.
+- only update gbs.conf that we had changed and catch permission
+    exception.
+- add /etc/gbs.conf back.
+
+
+[[END]]
+Huang Hao
+Hide "man" subcommand which was introduced by osc.cmdln.
+
+osc.cmdln add do_man() and hide() to cmdln.1.0.0. do_man() is a
+subcommand to generate man page. hide() is a decorator to hide
+subcommand in help message, but user can still use it.
+
+
+[[END]]
+Markus Lehtonen
+Use GBS temp dir for GBP, too
+
+Fixes #332.
+
+
+[[END]]
+Markus Lehtonen
+Fix typo in gbp error message
+
+
+[[END]]
+Qiang Z Zhang
+Merge "Little refactor and add test cases to conf.py" into devel
+[[END]]
+Huang Hao
+Fix minor bugs
+
+- catch ValueError for url given by --repository
+- prompt user if can't find obs api
+- use empty password if no passwd item found for obs
+
+
+[[END]]
+Huang Hao
+Little refactor and add test cases to conf.py
+
+- change BrainConfigParser.read() to read_one() since the code only
+    use this function to read one config file. It's simpler.
+- remove BrainConfigParser.check_opt() since no code use it.
+- remove else branch in ConfigMgr.get() since the code can still
+    work if val is empty string. Also add a test case for it.
+- remove ConfigMgr.set() since no code use it. passwdx set back
+    in _check_passwd(), and we will not use this set() function to
+    add option into config file.
+- change implementation of Fixture class, it doesn't call start()
+    and stop() methods which introduced by mock0.7
+- add more test cases for conf.py
+
+
+[[END]]
+Zhang Qiang
+rename conf as correct tizen release name
+
+This renameing phrase is needed by depanneur
+
+
+[[END]]
+Huang Hao
+Support profile oriented style of config.
+
+- support profile oriented style. It is compatible with subcommand
+    oriented style.
+- add a class Profile to store url/user/password of repos and api.
+- add a class BizConfigManager extending from ConfigMgr. It
+    handles profile info and does not care about multi-levels and
+    passwdx issues. It returns current profile instance even
+    config file has subcommand oriented style.
+- make two functions decode_passwdx, encode_passwd to convert
+    between passwd and passwdx.
+- move get_repos_conf() from cmd_build.py to conf.py and split it
+    into two parts
+    _parse_build_repos() and _build_profile_by_subcommand()
+- add test cases in test_profile.py
+
+
+[[END]]
+Huang Hao
+Support ini section header like [section "name"].
+
+Add a class SectionPattern to support section header style like
+[section "name"]. It's also compatible with style like [section].
+
+
+[[END]]
+Markus Lehtonen
+Add upstream-branch and upstream-tag options
+
+Add config file and command line options to specify the upstream branch
+name and upstream tag format for build, export and remotebuild commands.
+This is needed in order to be able to support different maintenance
+models of non-native packages (with patch-generation enabled):
+1. If upstream sources are imported with GBS, these options are not
+   needed
+2. However, if maintainer uses upstream git tree directly, he needs to
+   be able to specify the tag format - otherwise gbp is unable to
+   create orig source archive or generate patches
+
+Command line option takes preference over the config file.
+
+
+[[END]]
+Markus Lehtonen
+Enable patch-generation
+
+This commit enables the "proper" maintenance model of packages. That is,
+create a real upstream source archive (matching the upstream tag) and
+patches on top of that. It facilitates the patch compression support in
+git-buildpackage: patches bigger that 100kB are compressed with gzip.
+GBP also modifies the spec file to contain the new list of patches.
+
+GBS enables this mode if the git tree has 'upstream' branch. It tries to
+checkout the orig tarball with pristine-tar, if 'pristine-tar'
+branch is found. If this fails, it tries to create the orig tarball from
+a git tag corresponding the upstream version.
+
+GBS falls back to the old method of generating one monolithic tarball if
+exporting of packaging files (i.e. upstream archive and patch
+generation) in this new mode fails.
+
+NOTE: .spec file autoupdate feature is limited and might not work with
+more exotic packaging. E.g. patches inside conditionals are not
+supported, at the moment.
+
+TODO: Currently, also packaging-only commits generate patches which is
+only noise from source code perspective. This needs to be fixed in
+git-buildpackage.
+
+
+[[END]]
+Zhang Qiang
+use iter var 'i' to replace repo, which already has been used
+
+
+[[END]]
+Zhang Qiang
+fix undefined var backtrace issue.
+
+
+[[END]]
+Zhang Qiang
+call build with --clean if target build root in not-ready stat.
+
+
+[[END]]
+Zhang Qiang
+fix reference undefined var backtrace issue
+
+
+[[END]]
+Markus Lehtonen
+Move gbp argument creation into one function
+
+
+[[END]]
+Qiang Z Zhang
+Merge "Fix KeyError in ConfigMgr._get" into devel
+[[END]]
+Huang Hao
+Fix KeyError in ConfigMgr._get
+
+In function ConfigMrg._get() if NoOptionError occurs and section
+name is not in self.DEFAULTS, KeyError will be raised.
+
+
+[[END]]
+Qiang Z Zhang
+Merge "Add tests for getting config value." into devel
+[[END]]
+Huang Hao
+Add tests for getting config value.
+
+Fixture object can setup the 3 levels of different mocking config
+files which locate in tests/testdata/ini/.
+
+
+[[END]]
+Ed Bartosh
+cmd_build: Implemented output repository creation.
+
+When -o commandline option is used packages are copied to specified
+output directory and now createrepo is called to create rpm repo out
+of that directory.
+
+Fixes: #74, #201
+
+
+[[END]]
+Huang Hao
+Change tab to spaces
+
+
+[[END]]
+Ed Bartosh
+Code cleanup.
+
+A bit of pylinting. Also runner/embed function has been removed as
+it's not used in gbs.
+
+
+[[END]]
+Zhang Qiang
+Get rid of unused build_root config parameter
+
+It's not used anywhere in the code, so let's remove it.
+Fixes #293
+
+
+[[END]]
+Qiang Z Zhang
+Merge "Introduced base_prj and target_prj config parameters." into devel
+[[END]]
+Qiang Z Zhang
+Merge "Used username as part of temporary directory." into devel
+[[END]]
+Ed Bartosh
+Introduced base_prj and target_prj config parameters.
+
+Saves a lot of typing in command line.
+Fixes #242
+
+
+[[END]]
+Ed Bartosh
+Used username as part of temporary directory.
+
+Temporary directory is used as a base path for buildroot, cachedir and
+others temporary directories. Making it to contain username solves
+conflicts when gbs is run by more than one user on the same machine at
+the same time.
+
+Fixes: #283, #278, #244
+
+
+[[END]]
+Huang Hao
+Check build.xml format and warn user if build.conf does not exist
+
+Fix Bug #284. Method SafeURL.urljoin is useless now, so remove it.
+
+
+[[END]]
+Huang Hao
+Add class SafeURL to hide user/passwd info in url string.
+
+Try to fix bug#233, gerrit#894 is a hotfix for this issue in v0.9.
+Create SafeURL object from repoN.url/user/passwd in config file,
+this safe url is a string object, can be directly print to console.
+When pass to build script, use its property "full" with user/passwd
+info.
+
+
+[[END]]
+Qiang Z Zhang
+Merge "Used current user's name instead of config option." into devel
+[[END]]
+Qiang Z Zhang
+Merge "Used shorter import." into devel
+[[END]]
+Ed Bartosh
+Used current user's name instead of config option.
+
+In cmd_build user name from [remotebuild] section of configuration file
+was used as a part of temporary directory name. This approach is confusing
+(why anything from remotebuild is used in build mode?) and it also caused
+gbs crash when the same name is mentioned in [remotebuild] section for
+different local users.
+
+Fixes #283
+
+
+[[END]]
+Qiang Z Zhang
+Merge "Workarounded osc bug by retrying to call it 3 times." into devel
+[[END]]
+Qiang Z Zhang
+Merge "Use ctrl-c to interrupt pycurl downloading" into devel
+[[END]]
+Ed Bartosh
+Used shorter import.
+
+Using ObsError instead of using errors.ObsError. Makes lines
+shorter. Eliminates several pylint complains.
+
+
+[[END]]
+Ed Bartosh
+Workarounded osc bug by retrying to call it 3 times.
+
+Sometimes core.http_GET returns empty responce, which leeds to
+core.ET.ParseError: no element found: line 1, column 0. Trying to send
+request again solves the problem in most of the cases.
+
+Fixes #252
+
+
+[[END]]
+Markus Lehtonen
+Enable reading multiple config files (#27)
+
+When updating an existing key, it is set in the config file that it was
+read from.
+
+When adding a new key, it is added to the "highest priority" config file
+that has the desired section.
+
+
+[[END]]
+Huang Hao
+Use ctrl-c to interrupt pycurl downloading
+
+pycurl.perform() blocks ctrl-c. If forget to set proxy, we have to
+wait 30 seconds till connecting timeout.
+
+
+[[END]]
+Markus Lehtonen
+conf: don't use '/etc/gbs.conf'
+
+Drop the usage of the system level config file.
+
+
+[[END]]
+Markus Lehtonen
+Big overhaul of BrainConfigParser class
+
+Fixes problems in setting options in the BrainConfigParser class.
+Previously, linenumber pointers would get out-of-sync when
+updating/inserting/replacing new options with the set() method. Now we
+always parse the actual file contents when running set(), thus we never
+get out-of-sync.
+
+
+[[END]]
+Qiang Z Zhang
+Merge "Fix replacing of keys in config manager" into devel
+[[END]]
+Qiang Z Zhang
+Merge "Fix some small problems in RepoParser" into devel
+[[END]]
+Ed Bartosh
+Get rid of local copy of cmdln.py
+
+In the current code thereis a copy of cmdln.py module, which is also
+present in osc. gbs depends on osc, so it's better to just use cmldn
+from there to avoid unneeded code duplication.
+
+
+[[END]]
+Markus Lehtonen
+Fix replacing of keys in config manager
+
+Otherwise cmd_build will crash if 'passwd' are being replaced with
+'passwdx'.
+
+
+[[END]]
+Huang Hao
+Fix some small problems in RepoParser
+
+RepoParser.parse() is a bit of hard for understanding. try to make
+it more cleaner and readable.
+
+ - remove useless self.archs
+ - split local path out first, otherwise urlgrab will complain
+    "<url> malformed" for local path
+ - get_repos_by_arch() should return local+standard repos at least
+ - check self.buildconf each time before getting repo's build.conf
+ - self.repos is used only in one place in self.parse(), it can
+    be a local var and passed by argument
+ - build meta of one repo should not be used for another repo, so
+    self.buildmeta can also be a local var in for loop
+ - add a function is_standard_repo() to check repomd.xml file
+ - add a function fetch() to fetch a remote file into self.cachedir
+
+
+[[END]]
+Qiang Z Zhang
+Merge "Use pycurl Keep-Alive feature to save download time." into devel
+[[END]]
+Huang Hao
+Use pycurl Keep-Alive feature to save download time.
+
+When GBS parse "latest" type of repo url, it tries to download
+several URLs. This usually costs about 30 seconds to complete. By
+using keepalive it takes about 10 seconds. pycurl print "Re-using
+existing connection!" if pycurl.VERBOSE set to 1.
+
+
+[[END]]
+Qiang Z Zhang
+Merge "Raise OSCError in oscapi.py::OSC::core_http instead of ObsError." into devel
+[[END]]
+Ed Bartosh
+Implemented testcases for gbs changelog.
+
+
+[[END]]
+Ed Bartosh
+Renamed tests.
+
+Removed useless numbers from the test names.
+
+
+[[END]]
+Ed Bartosh
+cmd_changelog: Removed not working check.
+
+repo.is_clean returns tuple, so if not repo.is_clean() always False,
+which makes this check useless. I prefer to remove it instead of
+fixing because if I fix it it will start complaining each time git
+repo has untracked files and users may not like it.
+
+
+[[END]]
+Huang Hao
+Raise OSCError in oscapi.py::OSC::core_http instead of ObsError.
+
+Error message print out to console is incomplete since ObsError
+can't be catched by methods in oscapi.py and throw directly to
+cmd_remotebuild.py.
+
+
+[[END]]
+Guan Junchun
+get specified commit info
+
+1. gbs rb -c HEAD~1 should get 'HEAD~1' commit info
+2. gbs rb [--include-all] get 'HEAD' commit info
+
+[[END]]
+Zhang Qiang
+Merge "fix undefined issue introduced by merging code" into devel
+[[END]]
+Ed Bartosh
+Fixed Ubuntu builds.
+
+One more try to fix OTC Tester build.
+Please, don't merge this change until there will be 'Build Successful'
+message from OTC Tester for this change.
+
+PS: We need to do something with our release process. It's already
+second release, which breaks tester builds and fixing is not easy.
+
+
+[[END]]
+Zhang Qiang
+fix undefined issue introduced by merging code
+
+[[END]]
+Ed Bartosh
+Fixed Ubuntu builds in OTC Tools Tester - gbs.
+
+For every gbs release gbs.spec and gbs.dsc should be updated.
+Unfortunately gbs.dsc is still not used in gbs release process and
+maintainer forgets to update it. This leads to the breakage of the
+continuous integration tests (OTC Tools Tester - gbs job).
+
+
+[[END]]
+Zhang Qiang
+fix merge conflict issue from release-0.9 branch to devel
+
+[[END]]
+Zhang Qiang
+bump to version 0.9
+
+[[END]]
+Zhang Qiang
+always raise errors.ObsError in oscapi module instead of OSCError
+
+OSCError can't be catched and backtrace would be printed.
+
+[[END]]
+Zhang Qiang
+convert config data as string while putting to OBS
+
+This will cause exception/backtrace with some system. fix #240
+
+[[END]]
+Qiang Z Zhang
+Merge changes I4d66326a,I0d8c7379 into devel
+
+* changes:
+  Fixed tests for gbs help.
+  Implemented testcases for gbs import.
+
+[[END]]
+Zhang Qiang
+Fix incorrect gbp command line options in export and remotebuild
+
+
+[[END]]
+Ed Bartosh
+Pylining
+
+
+[[END]]
+Zhang Qiang
+unify the help info to use lower char
+
+[[END]]
+Huang Hao
+remove --debuginfo and --incremental
+
+--debuginfo useless not so remove it, we will have new design version
+of incremental build
+
+[[END]]
+Zhang Qiang
+Merge "support multiple repos from gbs.conf and command line opts" into release-0.9
+[[END]]
+Ed Bartosh
+Fixed tests for gbs help.
+
+Tests were running gbs help with os.system, which means that in order
+to pass tests gbs have to be installed. This doesn't make much sense
+for developer-level tests. They should be able to run from source tree
+without any preparations.
+
+
+[[END]]
+Ed Bartosh
+Implemented testcases for gbs import.
+
+This is a first real set of testcases for the gbs module. Testcases were
+taken from gbs-auto-test project (Thanks, guys!) and integrated into
+existing continuous integration infrastructure. Some new testcase have
+been added to increase test coverage.
+
+
+[[END]]
+Ed Bartosh
+Used absolute imports.
+
+PEP0008 discourages relative imports in quite strict manner:
+Relative imports for intra-package imports are highly
+discouraged. Always use the absolute package path for all imports.
+So, let's not have them.
+
+
+[[END]]
+Zhang Qiang
+raise error if base obs project is not exists
+
+[[END]]
+Zhang Qiang
+support multiple repos from gbs.conf and command line opts
+
+RepoParser class should parse all repos and generate standard repos
+and composite repos.
+
+[[END]]
+Huang Hao
+Use hostport instead of hostname.
+
+Include port in urls returns by get_repos_conf(). Fix issue#234
+
+[[END]]
+Zhang Qiang
+change failed to get build conf msg as warning
+
+[[END]]
+Zhang Qiang
+Merge branch 'release-0.9' into devel
+
+[[END]]
+Zhang Qiang
+hotfix: add clean_repos_userinfo to hide repos useinfo
+
+[[END]]
+Markus Lehtonen
+packaging: require latest git-buildpackage
+
+Requires the latest gbp in order to function correctly.
+
+
+[[END]]
+Markus Lehtonen
+build and export: conform to new API of git-buildpackage
+
+Command line option names and the SpecFile class have changed a bit.
+
+
+[[END]]
+Eduard Bartosh
+Merge "cmd_import: conform to new API of git-buildpackage" into devel
+[[END]]
+Eduard Bartosh
+Merge "cmd_changelog: conform to new API of git-buildpackage" into devel
+[[END]]
+Qiang Z Zhang
+Merge "Removed generation of __version__.py" into devel
+[[END]]
+Zhang Qiang
+copy build conf to $tmpdir/ for --noinit use
+
+[[END]]
+Zhang Qiang
+refinement about temp file/dir management
+
+1. create temp file/dir in $tmpdir setting in gbs.conf
+2. catch OSError in Temp class
+
+[[END]]
+Ed Bartosh
+Removed generation of __version__.py
+
+It makes gbs fail when run from source tree, if version is not
+generated yet. It also breakes tests because of the same reason.
+
+I reimplemented it in a way that version is taken from __init__.py and
+imported or parsed where version info is needed.
+Note, that in setup.py and Makefile it's parsed in order to less depend
+on python code. setup and Make should be able to work even if
+__init__.py has syntax errors. The only requirements to get a version
+from there is that it should be in parseable form.
+
+
+[[END]]
+Zhang Qiang
+use base64 to decode passwordx
+
+if using string.decode, binascii.Error would be raised, so just use
+base64i nstead just as what conf.py does.
+
+[[END]]
+Zhang Qiang
+remove duplicated git project checking
+
+RpmGitRepository will check the git project structure, so we dont
+need check once again.
+
+[[END]]
+Zhang Qiang
+Disabled auto patch generation in export/remotebuild
+
+With --git-no-auto-patch-gen git-buildpackage would ignore all
+upstream and vendor tags and create one tarball, without generating
+patches.
+
+[[END]]
+Zhang Qiang
+add --use-system-qemu option for new version of build
+
+[[END]]
+Zhang Qiang
+use tmpdir to store tempary gbs cache data
+
+[[END]]
+Markus Lehtonen
+cmd_import: conform to new API of git-buildpackage
+
+git-import-srpm automatically detects unpacked srpms. Also, prevent it
+from automatically applying patches (to match the old behaviour).
+
+
+[[END]]
+Markus Lehtonen
+cmd_changelog: conform to new API of git-buildpackage
+
+
+[[END]]
+Qiang Z Zhang
+Merge "Implemented submitting to OBS without creating local copy." into devel
+[[END]]
+Qiang Z Zhang
+Merge "cmd_submit: Adopted to changed gbp API get_upstream_branch" into devel
+[[END]]
+Ed Bartosh
+cmd_submit: Adopted to changed gbp API get_upstream_branch
+
+gbp API get_upstream_branch and set_upstream_branch were changed
+according to Markus suggestions (review #799). This change adopts
+gbs to new gbp API.
+
+
+[[END]]
+Zhang Qiang
+dont need check local branch name in changelog module
+
+gbs changelog is just used to generate changelog, so it should
+work on any branch.
+
+[[END]]
+Zhang Qiang
+unify the format of changelog entry
+
+[[END]]
+Ed Bartosh
+Fixed Ubuntu builds in OTC Tools Tester - gbs.
+
+For every gbs release gbs.spec and gbs.dsc should be updated.
+Unfortunately gbs.dsc is still not used in gbs release process and
+maintainer forgets to update it. This leads to the breakage of the
+continuous integration tests (OTC Tools Tester - gbs job).
+
+
+[[END]]
+Zhang Qiang
+merge changes from release-0.8.1 branches
+
+[[END]]
+Zhang Qiang
+bump to version 0.8.1
+
+[[END]]
+Zhang Qiang
+remove tracking authors info to make changelog standard
+
+[[END]]
+Zhang Qiang
+use universal time (GMT) instead of localtime to create tag
+
+[[END]]
+Zhang Qiang
+gbs submit support
+
+workflow:
+1) Check opts: -m is a must option
+2) if --target specified, use specified target branch name, use
+   current branch name
+3) create tag on target branch and commit ID, tag format is:
+   submit/${branch}/${date}.${time}
+4) push tag to gerrit.
+
+[[END]]
+Zhang Qiang
+cmd_build: Fixed check for empty user and password. Fixes #217.
+
+[[END]]
+Zhang Qiang
+Implemented --out commandline option. Fixes #200.
+
+--out specifies existing directory for the RPMs. gbs copies
+result RPMs to it when build is finished successfully.
+As build is run with root privileges we can't move RPMs because of
+possible access restrictions, so we're copying them.
+
+[[END]]
+Zhang Qiang
+conf: error handling if no no section headers
+
+[[END]]
+Ed Bartosh
+Implemented submitting to OBS without creating local copy.
+
+This change implements major redesign of the way gbs works
+with OBS. Currently it creates working copy, which requires
+a lot of code to support it. This change proposes much more
+simple way - without creating local copy. It drastically
+simplifies the code (+324, -1470) and illiminates buildservice
+and obspkg modules. Fixes #137 and #138
+
+
+[[END]]
+Zhang Qiang
+don't update repo url if user and passwd are all none
+
+[[END]]
+Zhang Qiang
+Create two functions for common code in export build and remotebuild modules
+
+[[END]]
+Zhang Qiang
+use abspath for export dir
+
+if running gbs outside of git dir or in sub-dir of git tree, gbs
+can't export correctly.
+
+[[END]]
+Zhang Qiang
+fix indent error and refine repo url pattern
+
+[[END]]
+Zhang Qiang
+move check specfile to guess_spec function
+
+guess_spec is used by build, remotebuild and export module, so it's
+better to check that in guess_spec function.
+
+[[END]]
+Zhang Qiang
+add new option --source-rpm to export source rpm, #89
+
+[[END]]
+Ed Bartosh
+cmd_export: Used absolute path to spec file to avoid wrong
+determination of spec path. Fixes #185
+
+When spec file is passed as a parameter --spec and path is relative it
+caused an error in path determination and gbs export was failing with
+error: RPM error while parsing spec: can't parse specfile. This change
+fixes the issue.
+
+
+[[END]]
+Ed Bartosh
+Fixed call of Temp -> utils.Temp
+
+
+[[END]]
+Ed Bartosh
+cmd_build: Improved using of repositories. Fixes #33
+
+Used both types of repos - mentioned in config file and specified in
+commandline. Previously only one type is used.
+
+Implemented --skip-conf-repos command line option to allow skipping
+repos, mentioned in config file.
+
+
+[[END]]
+Ed Bartosh
+Used --repo build options instead of GBS_BUILD_REPOAUTH hack
+
+This change uses repox.* config options from 'build' section to
+prepare proper repository urls, including auth info.
+
+Note that auth info is also allowed in repo urls,
+so repo1.url = 'https://user:password@host.com/' is valid and
+repo1.user/repo1.password are not required in this case.
+
+
+[[END]]
+Qiang Z Zhang
+Merge "Added 'clean' target to packaging/Makefile" into devel
+[[END]]
+Qiang Z Zhang
+Merge "cmd_build: Disabled auto patch generation. Fixes #DEVT-9" into devel
+[[END]]
+Ed Bartosh
+Added 'clean' target to packaging/Makefile
+
+Without this change Jenkins job accumulates useless tarballs
+from previous gbs versions and uploads them to OBS.
+
+
+[[END]]
+Ed Bartosh
+Fixed spelling. Capitalized help output. Fixes #189.
+
+
+[[END]]
+Ed Bartosh
+cmd_build: Disabled auto patch generation. Fixes #DEVT-9
+
+By default git-buildpackage tries to find a way to generate proper
+packaging info from git. For example if it founds branch with the name
+'upsream' it's looking for the upstream/version tag, where version is
+a version of the upstream sources. If it doesn't found the tag it
+fails to export. This behaviour caused confusiong among Tizen
+developers, as they don't use proper git layout, but some projects use
+upstream branches. This patch should fix this kind of issues. With
+--git-no-auto-patch-gen git-buildpackage should ignore all upstream
+and vendor tags and create one tarball, without generating patches.
+This change also includes pointing to the same commit as an upstream
+tree. Otherwise git-buildpackage will be looking at upstream/version
+tag if upstream branch exists.
+
+
+[[END]]
+Ed Bartosh
+Implemented cleaning of temporary files and directories.
+
+Implemented in utils.Temp class, which creates temporary file or
+directory using tempfile.md[ds]temp and destroys it when object is
+deleted(garbage collected when it's out of the scope or upon program
+exit).  Fixes #184 and #175.
+
+To avoid abnormal gbs exit(and not deleting temporaries) Exception is
+catched in gbs main module.
+
+
+[[END]]
+Ed Bartosh
+Updated debian/changelog to 0.8 from Tools:gbs. Updated .dsc.
+
+
+[[END]]
+Ed Bartosh
+Make dependencies to osc and build strict. Make dependency to
+git-buildpackage-rpm versioning.
+
+As gbs depends on locally modified versions of osc and build packages
+it makes sence to strictly depend on them to prevent installation of
+the bigger version of the package from distro repos.
+
+In case of git-buildpackage-rpm it's hardly possible for any distro to
+include bigger version as we're using upstream package and developing
+on top of it, so versioning dependency is enough.
+
+
+[[END]]
+Ed Bartosh
+ci: Fixed package build for both Ubuntu and OpenSUSE
+
+
+[[END]]
+Ed Bartosh
+ci: Fixed tests
+
+
+[[END]]
+Ed Bartosh
+ci: run nosetests with coverage and xunit support
+
+
+[[END]]
+Ed Bartosh
+ci: Added Ubuntu packaging.
+
+
+[[END]]
+Ed Bartosh
+Used username to construct a path to gbs cache.
+
+Without this change /var/tmp/gbscashe is owned by the user,
+who created it. This causes 'permission denied' traceback when trying
+to update repository metadata by another user running gbs build.
+
+Fixes #190 and #197.
+
+
+[[END]]
+Zhang Qiang
+bump to version gbs 0.8
+
+[[END]]
+Zhang Qiang
+fix gbs build twice issue
+
+[[END]]
+Zhang Qiang
+fix typo issue
+
+[[END]]
+Zhang Qiang
+add missing import errors module
+
+[[END]]
+Zhang Qiang
+use --include-all to replace --include-uncommited
+
+--include-all is more reasonable and easy used by developer than
+--include-uncommited
+
+[[END]]
+Zhang Qiang
+set up resolv.conf for buildroot network
+
+[[END]]
+Zhang Qiang
+refine --buildlog error info and usage help info
+
+[[END]]
+Zhang Qiang
+drop --include-untracked and print more friendly info
+
+--commit can't be specified together with --include-uncommited.
+give warning if no --include-uncommited specified and current git
+tree is not clean, and print changed and untracked files.
+
+[[END]]
+JF Ding
+use decoded passwd string in conf even for empty str
+
+[[END]]
+Dawei Yang
+correct some wrong spelling words
+
+[[END]]
+Zhang Qiang
+Fix spelling error
+
+[[END]]
+Zhang Qiang
+Code cleanup: Fix Pylint issue
+
+[[END]]
+Zhang Qiang
+--include-uncommited and --include-untracked support
+
+Add these two options to build/remotebuild/export:
+* --include-uncommited: only use files that are already tracked,
+    including changes have not been commited
+* --include-untracked: use untracked files, including changes have
+    not been commited, and untracked files
+
+[[END]]
+Zhang Qiang
+Allow empty user in gbs conf
+
+empty user is allowed while initialize gbs.conf,and give warn in
+remotebuild sub-command if user is empty.
+
+[[END]]
+Zhang Qiang
+remove branch checking, which would be checked in gbp
+
+This allow building when not on any branch. e.g. when just checked
+out a tag a want to build that.
+
+[[END]]
+Markus Lehtonen
+cmd_export: parse correct spec file
+
+Do not parse the working copy of the spec file but the one that was
+exported.
+
+
+[[END]]
+Markus Lehtonen
+cmd_remotebuild: don't check version
+
+Don't check version from .spec as we don't use it (and it would be
+wrong, anyway, if building other than local copy).
+
+
+[[END]]
+Markus Lehtonen
+cmd_build: use correct spec file
+
+Do not parse the working copy of the spec file but the one destined for
+building.
+
+
+[[END]]
+Zhang Qiang
+ask user to input remote build server first while creating conf
+
+remote build server should be asked input first, then user/pass.
+Do not need show user to use default values. fix # 113
+
+[[END]]
+Zhang Qiang
+Don't need check the existance of orig_file
+
+use gbp_build to generate tar ball and export packaging files
+directly, so we dont need care about the existance of orig_file (SOURCE)
+
+without this patch, gbs build would fails if no SOURCE tag in specfile.
+
+[[END]]
+Zhang Qiang
+add --extra-packs option for gbs build, implement # 119
+
+This option can be used to install more extra packages in build root.
+for example, developer can add option `--extra-packs=zypper,vim` to
+install extra zypper and vim to final build root.
+
+[[END]]
+Zhang Qiang
+gbs chroot support, implement #70
+
+[[END]]
+Zhang Qiang
+add --commit option for gbs build, remotebuild, and export, #83
+
+[[END]]
+Zhang Qiang
+Support custom location of configuration file, #92
+
+[[END]]
+Zhang Qiang
+Use the correct way to generate tarball make build/export consistent
+
+call gbp.buildpackage_rpm directly to make code consistent. fix #94
+
+[[END]]
+Zhang Qiang
+revert: bc4fa71d9d5935f8c44505ee538f7135cfefa44c
+
+use buildpackage_rpm module in gbp to make build source code consisted
+
+[[END]]
+Zhang Qiang
+Check branch to fix backtrace issue if no branch
+
+use git-buildpackage error directly, fix #85 and #110
+
+[[END]]
+Zhang Qiang
+use commit title of HEAD as commit message to OBS #112
+
+[[END]]
+Zhang Qiang
+Check the valid of generated repos before using it
+
+without this patch repos passed to build would contains some invalid
+repos, which result in build fails.
+
+[[END]]
+Zhang Qiang
+add --buildlog and --results support for gbs remotebuild
+
+[[END]]
+Zhang Qiang
+Update urlgrab as general url type
+
+[[END]]
+Zhang Qiang
+show the correct error info if no git repo found
+
+[[END]]
+Zhang Qiang
+submit packaging files to OBS
+
+This fix a bug introduced by bc4fa71d9d5935f8c44505ee538f7135cfefa44c
+
+[[END]]
+Anas Nashif
+Fixed messaging and option help and make it more clear.
+
+[[END]]
+Anas Nashif
+Revert "Fixed messaging and option help and make it more clear."
+
+This reverts commit 7adfa9f83b52c0a41b553f808b2bc5df4ddf4f5c
+[[END]]
+Anas Nashif
+Fixed messaging and option help and make it more clear.
+
+[[END]]
+Zhang Qiang
+use the same archive method with export/build to provide consistency
+
+[[END]]
+Zhang Qiang
+Using $tmpdir/$user/gbs-buildroot.arch as default buildroot
+
+With this patch different user can use gbs build at the same time,
+also different arch would be built to different buildroot.
+
+[[END]]
+Zhang Qiang
+Merge branch 'master' into devel
+
+[[END]]
+Zhang Qiang
+bump to version 0.7.1
+
+[[END]]
+Zhang Qiang
+catch TypeError and IOError if passwdx with wrong format
+
+[[END]]
+Zhang Qiang
+typo error using url
+
+[[END]]
+Zhang Qiang
+using the packaging directory for obs build files, #60
+
+with this patch, developers can chdir to packaging/ to check the
+remote build data, also osc can be used here.
+
+[[END]]
+hwangx
+fix gbs build -R option bug
+
+the repo value may occur conflicts , such as git_archive(repo...)
+so renmae repo to repourl
+
+[[END]]
+Zhang Qiang
+only check repos and build conf if no --noinit specified
+
+This feature is needed to compatible with previous gbs version.
+With --noinit option specified, gbs dont' need prepare build root,
+which should be already there. That means gbs don't need spend time
+to parse repos and download build conf, and just go into build root
+execute rpmbuild.
+
+[[END]]
+Zhang Qiang
+More error handling with gbs conf
+
+[[END]]
+Qiang Z Zhang
+Merge "Pylinting" into devel
+[[END]]
+Qiang Z Zhang
+Merge "Catched GitRepositoryError to avoid crashes 'Currently not on a branch' and similar. Fixes #85" into devel
+[[END]]
+Eduard Bartosh
+Merge "Set pycurl timeout as 30s" into devel
+[[END]]
+Ed Bartosh
+Pylinting
+
+
+[[END]]
+Ed Bartosh
+Catched GitRepositoryError to avoid crashes 'Currently not on a
+branch' and similar. Fixes #85
+
+
+[[END]]
+hwangx
+passwd may contain "@"
+
+[[END]]
+Zhang Qiang
+Set pycurl timeout as 30s
+
+[[END]]
+Zhang Qiang
+parse repos and fetch correct build conf from repos
+
+If no --dist specified, gbs would try to get build config from
+repos. Currently, the position of build config is  located  at
+builddata directory, and build.xml is the index file of build config
+file.
+
+If no build config file found from repos, build config from ~/.gbs.conf
+would be used.
+
+With this patch, a new format of repo is acceptable, which contains
+'builddata/build.xml', which contains repos and archs info, also build
+conf can be avaliable from this file.
+
+[[END]]
+Ed Bartosh
+Made one changelog entry in changelog mode. Fixes #90.
+
+Previously commits were groupped by date and gbs changelog generated
+one changelog entry for one group of commits. This was not convenient
+for maintainers as they tend to make one changelog entry per set of
+commits made sinse last changelog entry.
+This change introduces new behaviour of git changelog - it will
+generate only one changelog entry.
+
+
+[[END]]
+Ed Bartosh
+Implemented --commit command line option for remotebuild mode. Fixes #83
+
+--commit option allows user to specify commit id to build
+
+
+[[END]]
+Ed Bartosh
+Fixed bug in getting nearest tag for the commit in changelog mode.
+
+Previously HEAD is used to find this tag, which is not correct.
+
+
+[[END]]
+Ed Bartosh
+Implemented --message command line option for changelog mode
+
+
+[[END]]
+Ed Bartosh
+Used repo.path to use top-level git dir as a working dir. Fixes #21
+
+
+[[END]]
+Zhang Qiang
+bump to 0.7
+
+[[END]]
+Zhang Qiang
+Fix a logic error while setting buildarch
+
+[[END]]
+Zhang Qiang
+Update build conf
+
+[[END]]
+Zhang Qiang
+build arch: ia32 support and use system arch by default
+
+[[END]]
+Zhang Qiang
+hiden gbs submit in gbs 0.7
+
+[[END]]
+Zhang Qiang
+depend on git-buildpackage-rpm
+
+[[END]]
+Zhang Qiang
+pass specfile to gbp for archive tar ball
+
+relative path for specfile is needed
+
+[[END]]
+Zhang Qiang
+Raise ConfigError if repourl is invalid in conf file
+
+[[END]]
+Zhang Qiang
+Use git.status to check the status of changelog file
+
+[[END]]
+Zhang Qiang
+gbs build repo conf: support local repo or plain rpm dir
+
+[[END]]
+Ed Bartosh
+Fixed pylint findings. One of them (using GbpError without rpm. prefix) is a bug.
+
+
+[[END]]
+Ed Bartosh
+Got rid of catching CommandExecFailed exception. Gbp git module now throws only GitRepositoryErrors.
+
+
+[[END]]
+Ed Bartosh
+Sorted changelog entries in chronological order. fixes #55
+
+
+[[END]]
+Zhang Qiang
+catch invalid apiurl exception in buildservice module
+
+[[END]]
+Zhang Qiang
+Update build conf to align with OBS project config changes
+
+[[END]]
+Zhang Qiang
+check existance of project dir before checking accesss mode
+
+[[END]]
+Zhang Qiang
+remove user/email config for gbs import
+
+email/user info can be set from env GIT_AUTHOR_NAME/GIT_AUTHOR_EMAIL.
+or opts, that's more general.
+
+[[END]]
+Zhang Qiang
+import conf in main script to initialize gbs conf file
+
+[[END]]
+Zhang Qiang
+allow decode empty passwd in conf to avoid exceptions
+
+only check password if config file exist
+
+[[END]]
+JF Ding
+add default value for conf opt general:editor
+
+to avoid noopt exception for new subcommands
+
+[[END]]
+Zhang Qiang
+gbs submit support
+
+[[END]]
+Guan Junchun
+cmd_build: import missing tempfile python library
+
+[[END]]
+Dawei Yang
+check the tmpdir permission before remotebuild
+
+[[END]]
+Zhang Qiang
+Update doc to add export/changelog/submit sections
+
+ * remove gbs import-orig section
+
+[[END]]
+Zhang Qiang
+use Tizen:Main instead Trunk as the default project
+
+[[END]]
+Zhang Qiang
+use abspath in wordir to avoid no basename for git project
+
+[[END]]
+Zhang Qiang
+remove su-wraper config in gbs config file, use sudo always
+
+[[END]]
+Zhang Qiang
+Add binfmt-support for arm build support
+
+[[END]]
+Zhang Qiang
+print the detail path of binaries RPM packages
+
+[[END]]
+Ed Bartosh
+Update changes file properly
+
+
+[[END]]
+Eduard Bartosh
+Merge "fix typo getuid usage"
+[[END]]
+Qiang Z Zhang
+Merge "Fixed crash when changelog doesn't exist"
+[[END]]
+Ed Bartosh
+Fixed crash when changelog doesn't exist
+
+
+[[END]]
+Zhang Qiang
+fix typo getuid usage
+
+[[END]]
+Zhang Qiang
+Transfer local proxy env to build scripts
+
+[[END]]
+Zhang Qiang
+call sudo to set qemu arm build environment
+
+[[END]]
+JF Ding
+handle all plaintext passwd keys in config
+
+[[END]]
+hasan wan
+bugfix: run build command directly if user is root
+
+[[END]]
+JF Ding
+unified the default values of all config keys
+
+[[END]]
+hasan wan
+enable repo authenticate
+
+[[END]]
+Zhang Qiang
+Set default value for distconf to fix backtrace issue
+
+[[END]]
+Zhang Qiang
+dont need sudo before gbs build, use sudo as su-wrapper
+
+[[END]]
+Zhang Qiang
+remove extra output info about build commands
+
+[[END]]
+Ed Bartosh
+Removed useless getconfig mode.
+
+
+[[END]]
+Ed Bartosh
+Moved build-related functions from utils.py to cmd_build.py
+
+
+[[END]]
+Ed Bartosh
+Fixed bug(calling msger.error with 2 parameters). Simplified error message.
+
+
+[[END]]
+Ed Bartosh
+Removed unused code from utils.py
+
+
+[[END]]
+Ed Bartosh
+Pylinted utils.py
+
+
+[[END]]
+Ed Bartosh
+cmd_changelog: Don't update changelog if user doesn't save it in editor. Fixes #20
+
+
+[[END]]
+Dawei Yang
+report the error when parsing an invalid specfile
+
+[[END]]
+Ed Bartosh
+Used su-wrapper to run a build
+
+[[END]]
+Ed Bartosh
+pylinted
+
+[[END]]
+Zhang Qiang
+Dont't archive tarball if no source tarball specified
+
+[[END]]
+Zhang Qiang
+Add --spec option and add guess_spec fuc to select correct spec file
+
+[[END]]
+Qiang Z Zhang
+Merge "Add export sub command"
+[[END]]
+Anas Nashif
+Add export sub command
+
+Export packaging files to a directory out of the git tree or
+create archive in packaging without building.
+
+
+[[END]]
+Ed Bartosh
+changelog: Use EDITOR environment variable
+
+
+[[END]]
+Dawei Yang
+provide a callback function to check the validation of OBS project name
+
+[[END]]
+Guan Junchun
+handle gbs remotebuild build server connection timeout error
+
+[[END]]
+Guan Junchun
+check git dir before gbs remotebuild
+
+[[END]]
+Zhang Qiang
+check repository option with callback function
+
+[[END]]
+Zhang Qiang
+Update usage of configmgr to adjust new format of gbs config
+
+[[END]]
+Guan Junchun
+fix gbs import use undefined variable issue
+
+[[END]]
+Zhang Qiang
+bump to version 0.6
+
+[[END]]
+Zhang Qiang
+Clenup code of fetching dist conf from obs
+
+
+[[END]]
+Zhang Qiang
+Add find_binary_path function
+
+[[END]]
+Hasan Wan
+fix replacement issue after build->remotebuild
+
+[[END]]
+Zhang Qiang
+More error handling while import sources
+
+
+[[END]]
+Zhang Qiang
+Add error handle for permission of obs project
+
+[[END]]
+Zhang Qiang
+Update tizen-1.0.conf reference build.tizen.org OBS
+
+[[END]]
+Zhang Qiang
+fix rst2man issue in README
+
+
+[[END]]
+Ed Bartosh
+rename build->remotebuild, localbuild->build
+
+
+[[END]]
+Hasan Wan
+Set the defautl build server to api.tizen.org
+
+[[END]]
+Zhang Qiang
+Add --ccache and --incremental options
+
+
+[[END]]
+Zhang Qiang
+cleanup _fall_to_shell related code
+
+
+[[END]]
+Zhang Qiang
+remove useless data/build.sh
+
+[[END]]
+Zhang Qiang
+bump to version 0.5
+
+[[END]]
+Zhang Qiang
+Root permission required notification promote, if running in normal user
+
+[[END]]
+Zhang Qiang
+Update dist packaging files: add missing depends & build errors
+
+[[END]]
+Ed Bartosh
+Properly determine compression type of orig tarball
+
+
+[[END]]
+Ed Bartosh
+Consider workdir argument in build mode
+
+
+[[END]]
+Ed Bartosh
+Get rid of deprecated option --tag in import mode
+
+
+[[END]]
+Ed Bartosh
+Fixed crashes 'Revision xxx not found' in changelog mode
+
+
+[[END]]
+Ed Bartosh
+Used --upstream_branch option in import mode
+
+
+[[END]]
+Zhang Qiang
+support git repository localbuild
+
+[[END]]
+Ed Bartosh
+pylinted cmd_build.py
+
+
+[[END]]
+Ed Bartosh
+Used spec parser from git-buildpackage
+
+
+[[END]]
+Ed Bartosh
+Consider --author-name and --author-email options in import mode
+
+
+[[END]]
+Ed Bartosh
+Updated usage output of changelog mode
+
+
+[[END]]
+Ed Bartosh
+Consider --no-merge when importing original tarball
+
+
+[[END]]
+Ed Bartosh
+Unified logging between gbs and gbp
+
+
+[[END]]
+Ed Bartosh
+Pylinted from rate 5.66 to 7.57
+
+
+[[END]]
+Ed Bartosh
+Merged import-orig and import
+
+
+[[END]]
+Ed Bartosh
+changelog mode: Removed confusing and not used opts --author, --version and --full
+
+
+[[END]]
+Ed Bartosh
+Implemented creation of new .changes file
+
+
+[[END]]
+Ed Bartosh
+Pylinted cmd_changelog.py
+
+
+[[END]]
+Ed Bartosh
+Removed unused imports
+
+
+[[END]]
+Ed Bartosh
+Update changelog inplace
+
+
+[[END]]
+Ed Bartosh
+replaced class Changes with functions
+
+
+[[END]]
+Ed Bartosh
+Reworked changelog mode
+
+
+[[END]]
+Ed Bartosh
+fixed regexp for changelog parsing
+
+
+[[END]]
+Ed Bartosh
+Fixed whitespaces, tabs, etc
+
+
+[[END]]
+Ed Bartosh
+pylinting: fixed and reorganized imports
+
+
+[[END]]
+Ed Bartosh
+pylinting: fixed "string statement has no effect" warnings
+
+
+[[END]]
+Ed Bartosh
+pylinting: fixed variable names, unused variables, etc
+
+
+[[END]]
+Ed Bartosh
+pylinting: fixed whitespaces
+
+
+[[END]]
+Ed Bartosh
+pylinting: removed long lines
+
+
+[[END]]
+Ed Bartosh
+Removed git.py
+
+
+[[END]]
+Ed Bartosh
+Used git-buildpackage API RpmGitRepository in gbs changelog mode
+
+
+[[END]]
+Ed Bartosh
+Used git-buildpackage API RpmGitRepository in gbs localbuild mode
+
+
+[[END]]
+Ed Bartosh
+Used git-buildpackage in gbs import-orig mode
+
+
+[[END]]
+Ed Bartosh
+Used git-buildpackage in gbs import mode for specs and srpms
+
+
+[[END]]
+Ed Bartosh
+pylinted cmd_build.py
+
+
+[[END]]
+Ed Bartosh
+Fixed rpm build
+
+
+[[END]]
+Ed Bartosh
+Used git-buildpackage in gbs build mode
+
+
+[[END]]
+Ed Bartosh
+Symlinked gbs.spec to packaging/
+
+
+[[END]]
+Hasan Wan
+sub-command: changelog
+
+[[END]]
+Zhang Qiang
+setup qemu env for arm build
+
+[[END]]
+Zhang Qiang
+bump to version 0.4
+
+[[END]]
+Zhang Qiang
+Correct tar ball directory
+
+[[END]]
+Zhang Qiang
+revert 'parse_spec function' patch
+
+[[END]]
+Zhang Qiang
+Support more tar ball format, tar.bz2, tar.gz, tar.xz, etc.
+
+[[END]]
+Zhang Qiang
+read commit name/email from git config
+
+[[END]]
+Hasan Wan
+git module: add commits, commit_parse, and get_config founction
+
+[[END]]
+Hasan Wan
+Add general GBS error class
+
+[[END]]
+Zhang Qiang
+Add --author-name and --author-email support for gbs import
+
+[[END]]
+Zhang Qiang
+Add arch opts checking.
+
+[[END]]
+Zhang Qiang
+Raise obs error if Base project is empty
+
+[[END]]
+hwangx
+parse_spec unittest
+
+[[END]]
+hwangx
+parse_spec function
+
+[[END]]
+Guan Junchun
+update unittest test case
+
+    1. test .tar.xz .tar.lzma .tgz is supported or not
+
+[[END]]
+Guan Junchun
+add unittest test case
+
+1. test UpstreamTarball class in utils.py
+    test tarball format is supported or not, .tar.bz2, .tar.gz, .tar.tgz, .zip
+
+[[END]]
+Hasan Wan
+Startup for unittest
+
+[[END]]
+Zhang Qiang
+bump up version to 0.3
+
+[[END]]
+Zhang Qiang
+Code cleanup and format adjust
+
+Adjust the output information and make it more readable.
+
+[[END]]
+Zhang Qiang
+fix rst format issue
+
+rst format need blank line after sections.
+
+[[END]]
+Zhang Qiang
+create tmp dir before importing packages
+
+[[END]]
+Yang Dawei
+update gbs import-orig
+
+[[END]]
+Zhang Qiang
+add supported tarball format
+
+[[END]]
+Yang Dawei
+gbs import optimization
+
+[[END]]
+Qiang Zhang
+Merge "fix unpack execption when gbs import tarball"
+[[END]]
+Zhang Qiang
+fix import-orig twice issue
+
+without this patch, all the commits and files would be removed
+unexpectlly.
+
+[[END]]
+Yang Dawei
+Update README.rst:word-error handling
+
+[[END]]
+Zhang Qiang
+Catch unpack exception if unpack fails
+
+[[END]]
+Guan Junchun
+fix unpack execption when gbs import tarball
+
+[[END]]
+Zhang Qiang
+Update README: Add localbuild and import sections
+
+[[END]]
+Zhang Qiang
+add options --tag for creating tag.
+
+[[END]]
+Zhang Qiang
+dont need to checkout upstream branch again
+
+[[END]]
+Guan Junchun
+fix bugs: gbs import XXX.spec error when the dir of spec file contains contents
+
+[[END]]
+Zhang Qiang
+fix issue while importing src.rpm twice
+
+[[END]]
+Zhang Qiang
+gbs import_orig support
+
+[[END]]
+Zhang Qiang
+fix gbs localbuild log error
+
+[[END]]
+Zhang Qiang
+add --force-debian option for ubuntu while unpacking src.rpm
+
+[[END]]
+Zhang Qiang
+fix README.rst build issue
+
+[[END]]
+Zhang Qiang
+localbuild: refine error handling and use 'sudo' by default
+
+[[END]]
+Zhang Qiang
+add find_tag and merge interface, and create upstream branch
+
+[[END]]
+Zhang Qiang
+first version of gbs import
+
+This version of gbs import support the following features:
+1. import source rpm to git repository, with two commits, one is
+upstream tar ball, another is packaging files, including patches and
+spec file;
+2. import sources, including tarball, patches and specfile. spec file
+need to provide.
+
+[[END]]
+Zhang Qiang
+move archive code after options check.
+
+[[END]]
+Zhang Qiang
+Update gbs build/localbuild document
+
+[[END]]
+JF Ding
+be safe to catch all exception from osc.core
+
+[[END]]
+Zhang Qiang
+gbs local build support
+
+First version of localbuild support.
+Design:
+    As the quick start and first version, gbs-localbuild call build
+    scripts directly, in other words, it's a wrapper of build scripts,
+    Here's the basic work follow of gbs local build:
+    1) Check options and generate command options transfer to 'build'
+       i)   arch: build target arch
+       ii)  repository: Specify package repositories to create build env
+       iii) dist conf file: this can be specified from gbs.conf or
+            command line
+       iiii)buildroot: Specify build rootdir to setup chroot environment
+    2) call linux32 to build 32bit packages if necessary
+    3) change to root user to run rpmbuild
+    4) call build scripts to all the build stuff.
+
+[[END]]
+JF Ding
+inject osc.core to handle empty server response
+
+[[END]]
+JF Ding
+fixed msger.PrintBufWrapper: proper handle of exceptions
+
+catch the exception, stop the wrapper and print out the err
+message, then raise forward
+
+[[END]]
+JF Ding
+do not show waiting dots for obs proj checking
+
+[[END]]
+Zhang Qiang
+Update README and fix packaging issue.
+
+[[END]]
+JF Ding
+show simple progress message for long time operations
+
+new deccorator in msger.py, and wrapping the potential long-time
+functions
+
+[[END]]
+Zhang Qiang
+Update Readme for new release
+
+[[END]]
+Zhang Qiang
+Update distfiles with correct dependencies
+
+[[END]]
+Hasan Wan
+enable the global debug and verbose for osc
+
+[[END]]
+JF Ding
+fixed bug in runner for wildchar matching
+
+e.g. the old one cannot handle 'ls *' properly, we need the
+'shell=True' option of subprocess module to handle wildchars
+automatically.
+
+[[END]]
+JF Ding
+more generic git.archive implementation
+
+[[END]]
+Zhang Qiang
+Add git archive_tar API, and use git archive to gen tar ball
+
+[[END]]
+Zhang Qiang
+gbs-build: enhancement and bug fix
+
+* dont use keyring
+* re-define tar ball format
+* give details obs package url
+
+[[END]]
+JF Ding
+avoid to catch print msg in debug run mode
+
+[[END]]
+JF Ding
+code format: shorten all 80+ long lines
+
+[[END]]
+JF Ding
+msger: sync the changes from mic.git
+
+[[END]]
+JF Ding
+changes of git wrapper module
+
+[[END]]
+Zhang Qiang
+gbs-build: support --base-obsprj and --target-obsprj
+
+[[END]]
+Zhang Qiang
+Fix branch/checkout issue
+
+[[END]]
+JF Ding
+add wrapper class to catch `print` in msger
+
+[[END]]
+JF Ding
+add 'plaintext_passwd=0' in tmp oscrc
+
+[[END]]
+Zhang Qiang
+Merge "tuned the output message for build cmd"
+[[END]]
+Zhang Qiang
+tuned the output message for build cmd
+
+[[END]]
+Zhang Qiang
+cleanup git.py
+
+[[END]]
+Zhang Qiang
+Merge "cleanup git.py"
+[[END]]
+JF Ding
+failed case for invalid spec file w/ warn msg
+
+[[END]]
+JF Ding
+use utils.parse_spec to get name and version str
+
+[[END]]
+JF Ding
+new utils func: parse_spec to get macro value
+
+[[END]]
+Zhang Qiang
+Update build scripts
+
+First vesion of useable gbs build out.
+
+[[END]]
+JF Ding
+fixed several typos and updated obspkg.branch_from
+
+[[END]]
+JF Ding
+obspkg: fix the checkout path issue
+
+[[END]]
+JF Ding
+obspkg: new feature to create branch project
+
+[[END]]
+Zhang Qiang
+Merge "Update gbs build and build service code."
+[[END]]
+Zhang Qiang
+Update gbs build and build service code.
+
+gbs build can pack package, create project/package directory.
+
+oscpkg.commit() has some issue need to be fixed.
+
+[[END]]
+Huaxu Wan
+Merge "remove commented old lines in git.py"
+[[END]]
+Qiang Zhang
+Merge "conf: add general key 'tmpdir'"
+[[END]]
+Qiang Zhang
+Merge "enhance configmgr for full support of defaults"
+[[END]]
+Qiang Zhang
+Merge "new module obspkg as the wrapper of local obs pkg"
+[[END]]
+JF Ding
+remove commented old lines in git.py
+
+and move the Exception definition to errors.py
+
+[[END]]
+JF Ding
+conf: add general key 'tmpdir'
+
+[[END]]
+JF Ding
+enhance configmgr for full support of defaults
+
+and flexible handling for 'passwd' checkings
+
+[[END]]
+Zhang Qiang
+prototype for gbs build implementation
+
+[[END]]
+JF Ding
+new module obspkg as the wrapper of local obs pkg
+
+From now, all operations around local obs pkg working dir should
+be done by this module. And all server only related access should
+be thru buildservice module.
+And inside obspkg, all obs/osc callings are thru buildservice.
+
+[[END]]
+JF Ding
+cleanup buildservice module
+
+[[END]]
+Hasan Wan
+git module clean up
+
+[[END]]
+JF Ding
+clean up deprecated stuff for old process
+
+[[END]]
+JF Ding
+enhance conf module to support multiple conf files
+
+[[END]]
+JF Ding
+Merge "add new module for obs accessing"
+[[END]]
+JF Ding
+add new module for obs accessing
+
+[[END]]
+Hasan Wan
+add new git module
+
+[[END]]
+Hasan Wan
+not keep *.origin copy in local
+
+[[END]]
+Hasan Wan
+fix bug# PTINF-43, get project name failure if not in remote.origin
+
+[[END]]
+Hasan Wan
+Set gbs.conf file to 0600 permissions, fix bug# PTINF-156
+
+[[END]]
+Yan Yin
+add missing import
+
+[[END]]
+Yan Yin
+fix typo error
+
+[[END]]
+Rolla Selbak
+Merge branch 'master' of dmz:gbs
+
+[[END]]
+Rolla Selbak
+Added build_server global conf.  Added message on where developer can find remote build log when performing 'gbs build'. Used correct default link in conf for now.
+
+[[END]]
+JF Ding
+more clear comments of _read() in conf.py
+
+[[END]]
+Rolla Selbak
+Fixed small wordings in warning and error message
+
+[[END]]
+Hasan Wan
+bug fix: path to tarball pattern mismatch
+
+[[END]]
+Hasan Wan
+check permission before upload tar ball
+
+[[END]]
+Hasan Wan
+bug fix: typo, get nothing when probe the last patch number
+
+[[END]]
+Hasan Wan
+import.sh: use -p to specify the target project, show upload progress by a progress bar
+
+[[END]]
+Hasan Wan
+add tag as parameter to back-end service
+
+[[END]]
+Hasan Wan
+force checking the user privilege when upload tar ball to source server
+
+[[END]]
+Hasan Wan
+New feature: support local tag when make test build
+             import.sh:show upload status
+
+[[END]]
+Hasan Wan
+bug fix: sources file format
+
+[[END]]
+Hasan Wan
+bug fix: handle -d parameter
+
+[[END]]
+Hasan Wan
+init support upload tarball to the source server
+
+[[END]]
+Anas Nashif
+fixed wording
+
+[[END]]
+Huaxu Wan
+fix a bug about git add the wrong patch; might get the wrong line number
+
+[[END]]
+JF Ding
+start the skeleton of "import" subcmd
+
+[[END]]
+JF Ding
+add -L option to curl cover 301 pages
+
+[[END]]
+Huaxu Wan
+Bypassing the SSL as a workaround temporarily
+
+[[END]]
+JF Ding
+rename project name to "gbs"
+
+git-build-system
+
+[[END]]
+Zhang Qiang
+fix packaging issue while adding new patch
+
+This scripts can't work if 'Patch' info contains in specfile, so we
+should pattern 'Patch' from the beginning of lines.
+
+Also sort patch number first, then select the last one.
+
+[[END]]
+Huaxu Wan
+fix a bug about sources line
+
+[[END]]
+JF Ding
+update output message of packaging.sh
+
+[[END]]
+Huaxu Wan
+git rm/add when remove/add new patches
+
+[[END]]
+JF Ding
+transfer "-d" and "-v" opts to embedded shell scripts
+
+[[END]]
+JF Ding
+change the default src_server value in config
+
+[[END]]
+JF Ding
+change the proj name back to "tizenpkg"
+
+[[END]]
+JF Ding
+append dsc file for debian packaging to distfiles
+
+[[END]]
+JF Ding
+update output msg with new proj name
+
+[[END]]
+JF Ding
+Merge remote branch 'origin/master'
+
+[[END]]
+JF Ding
+rename proj name to 'pkghelper'
+
+[[END]]
+Huaxu Wan
+return error if server unavailable
+
+[[END]]
+Huaxu Wan
+dump server log when failed
+
+[[END]]
+Huaxu Wan
+build.sh: show queue info
+
+[[END]]
+Huaxu Wan
+support shortcut git curl
+
+[[END]]
+JF Ding
+added distfiles for rpm/deb packaging
+
+[[END]]
+JF Ding
+update cmd_build according build.sh update
+
+[[END]]
+JF Ding
+implement 'build' cmd using python
+
+[[END]]
+JF Ding
+add new modules to call git and curl
+
+[[END]]
+Huaxu Wan
+support auth OBS by userself on hudson
+
+[[END]]
+Huaxu Wan
+fix bug about last build id
+
+[[END]]
+Huaxu Wan
+queue show to user
+
+[[END]]
+Huaxu Wan
+build.sh: only show output at verbose mode
+
+[[END]]
+Huaxu Wan
+client support dynamic parameter
+
+[[END]]
+Huaxu Wan
+add parameter to specify spec file, with question to select one
+
+[[END]]
+Huaxu Wan
+packaging.sh: add parameter to specify the tag to archive as source tar ball
+
+[[END]]
+JF Ding
+update Makefile for install --prefix value
+
+[[END]]
+JF Ding
+proper handling for replacing optkey
+
+[[END]]
+Huaxu Wan
+get user/name from tizenconf
+
+[[END]]
+JF Ding
+remove all hudson related names
+
+to be more generic
+
+[[END]]
+JF Ding
+use bash instead of sh to run scripts
+
+[[END]]
+JF Ding
+remove arg0 before transfer argv to sh script
+
+[[END]]
+JF Ding
+raise exception for invalid opt key
+
+[[END]]
+Huaxu Wan
+build.sh clean up
+
+[[END]]
+Huaxu Wan
+subcommand parameter cleanup
+
+[[END]]
+Yang Lin
+Merge "support submit testing build to a specific obs project"
+[[END]]
+Yang Lin
+support submit testing build to a specific obs project
+
+[[END]]
+JF Ding
+add empty cmd_build module
+
+[[END]]
+Huaxu Wan
+build works
+
+[[END]]
+JF Ding
+new subcmd getconfig to query config with pass special handling
+
+[[END]]
+JF Ding
+new subcmd 'import'
+
+[[END]]
+JF Ding
+Merge remote branch 'origin/master'
+
+[[END]]
+Huaxu Wan
+works without rest-plugins on Jenkins
+
+[[END]]
+JF Ding
+support to replace old opt key in conf.py
+
+[[END]]
+JF Ding
+add password encoding protect in config file
+
+[[END]]
+JF Ding
+hardcode arg0 in usage msg of packaging.sh
+
+[[END]]
+JF Ding
+Merge remote branch 'origin/master'
+
+[[END]]
+JF Ding
+smarter sh script wrapper
+
+[[END]]
+Huaxu Wan
+color info output
+
+[[END]]
+JF Ding
+add other 2 subcmd shell scripts
+
+[[END]]
+JF Ding
+add config file support
+
+[[END]]
+JF Ding
+change sh wrapper method
+
+[[END]]
+Huaxu Wan
+add init packaging subcmd
+
+[[END]]
+JF Ding
+add shell script wrapper support
+
+[[END]]
+JF Ding
+initial import for tool framework
+
+[[END]]
