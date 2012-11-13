@@ -1,7 +1,7 @@
 import re
 import random
 import nltk
-from nltk import ConditionalFreqDist, PorterStemmer
+from nltk import FreqDist, ConditionalFreqDist, PorterStemmer
 from nltk.corpus import stopwords
 
 
@@ -20,11 +20,11 @@ def stem(word):
 
 def get_words(txt):
     def valid(word):
-        return len(word) > 1 and word[0].isalpha() and word not in STOP
+        return word not in STOP and len(word) > 1 and word[0].isalpha()
     def gbs(word):
         return word not in GBS
 
-    return filter(gbs, map(stem, filter(valid, tokenize(txt))))
+    return filter(gbs, map(stem, filter(valid, nltk.word_tokenize(txt))))
 
 def author_mapping(author):
     author = author.lower()
@@ -63,19 +63,24 @@ def load_data(fname):
 class Model(object):
 
     def summary(self):
-        for author, prob in self.cls_prob.items():
-            print '%20s %5.2f%%' % (author, prob*100)
-            
-    def learn(self, data):
-        cfd = ConditionalFreqDist((author, word)
-            for msg, author in data
-            for word in get_words(msg))
+        print self.cls_fd
+
+    def learn(self, A):
+        print len(A)
+        self.cls_fd = cls_fd = FreqDist()
+        pairs = []
+        for x, y in A:
+            cls_fd.inc(y)
+            for feature in get_words(x):
+                pairs.append((y, feature))
+        cfd = ConditionalFreqDist(pairs)
         self.cfd = cfd
 
         if DEBUG:
             print cfd
             print cfd.conditions()
-            cfd.tabulate(samples=['gbs', 'build', 'spec', 'repo', 'config'])
+            #cfd.tabulate(samples=['gbs', 'build', 'spec', 'repo', 'config'])
+            cfd.tabulate()
             for author in cfd.conditions():
                 print 'AUTHOR:', author
                 for word, count in cfd[author].items():
@@ -88,11 +93,9 @@ class Model(object):
             total += fd.N()
             voc |= set(fd.keys())
 
-        self.cls_prob = cls_prob = {}
         self.cls_feature_prob = cls_feature_prob = {}
         for cls in cfd.conditions():
             fd = cfd[cls]
-            cls_prob[cls] = fd.N() / total
 
             cls_feature_prob[cls] = wc = {}
             for word in voc:
@@ -111,10 +114,12 @@ class Model(object):
             ret.append((prob, cls))
 
         ret.sort(key=lambda i:i[0], reverse=True)
+        if DEBUG:
+            print ret
         return ret[0][1]
 
     def class_prob(self, cls):
-        return self.cls_prob[cls]
+        return self.cls_fd.freq(cls)
 
     def class_feature_prob(self, cls, feature, positive):
         prob = self.cls_feature_prob[cls][feature]
@@ -137,6 +142,8 @@ def main():
     correct = 0.
     for x, y in verify_set:
         pred = model.predict(x)
+        if DEBUG:
+            print x
         print pred, y
         if pred == y:
             correct += 1
@@ -144,4 +151,16 @@ def main():
     ratio = correct * 100 / n
     print 'correct ratio:%.2f%%' % ratio
 
+def test():
+    pos = ['like lot']*2000 + ['simple easy']*3000 + ['enjoying lot']*1000
+    neg = ['hate waste']*800 + ['simple bore']*200 + ['enjoy lot']*400 + ['enjoy']*600
+    learning_set = [(x, '+') for x in pos] + [(x, '-') for x in neg]
+
+    model = Model()
+    model.learn(learning_set)
+    model.summary()
+    print model.predict('like simple lot')
+
+
 main()
+#test()
