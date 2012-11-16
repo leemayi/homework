@@ -12,8 +12,6 @@ def esc(txt):
     return txt
 
 
-CMD = '''wget --no-cookies --header "Cookie: $(cat cookies.txt)" '%s' -O '%s' '''
-
 def parse():
     soup = BS(open('index').read())
     for item in soup.findAll('a', 'list_header_link'):
