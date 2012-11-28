@@ -49,17 +49,20 @@ def array(images):
     return im
 
 
+def write_numbers(data):
+    with open('numbers.txt', 'w') as f:
+        for im in data:
+            line = ' '.join([ str(p) for p in im ])
+            f.write(line+'\n')
+
 def test():
-    n = 49
+    n = 16
     labels = read_labels('MNIST/t10k-labels-idx1-ubyte')[:n]
     size, data = read_images('MNIST/t10k-images-idx3-ubyte')
     data = data[:n]
 
     if True:
-        with open('numbers.txt', 'w') as f:
-            for im in data:
-                line = ' '.join([ str(p) for p in im ])
-                f.write(line+'\n')
+        write_numbers(data)
     else:
         images = [ create_image(i, size) for i in data ]
         panel = array(images)
@@ -68,4 +71,23 @@ def test():
         panel.show()
 
 
-test()
+
+def test2():
+    data = [int(float(line)) for line in open('mean.txt')]
+    #im = create_image(data, (28,28))
+    im = create_image(data, (320, 243))
+    im.show()
+
+def load_face(fname):
+    im = Image.open(fname).convert('L')
+    print im.size
+    return im.getdata()
+
+
+def test3():
+    faces = [load_face('yalefaces/subject%02d.normal'%i) for i in range(1,16)]
+    print len(faces[0])
+    write_numbers(faces)
+
+
+test2()
