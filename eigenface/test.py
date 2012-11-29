@@ -28,20 +28,13 @@ def create_image(data, size, reverse=False):
     im = Image.fromstring('L', size, buf)
     return im
 
-def guess_grid(n):
-    sqrt = int(math.sqrt(n))
-    if sqrt*sqrt == n:
-        rows = cols = sqrt
-    #TODO:
-    return rows, cols
-
-def array(images):
+def array(images, rows, cols):
     n = len(images)
+    print n
     assert n > 0
-    rows, cols = guess_grid(n)
     mode = images[0].mode
     w, h = images[0].size # assume all images have the same size
-    size = (h*cols, w*rows)
+    size = (w*cols, h*rows)
     im = Image.new(mode, size)
     for r in range(rows):
         for c in range(cols):
@@ -50,7 +43,6 @@ def array(images):
                 break
             im.paste(images[i], (w*c, h*r))
     return im
-
 
 def dump(data, fname):
     with open(fname, 'w') as f:
@@ -65,10 +57,16 @@ def write_numbers():
     data = data[:n]
     dump(data, 'numbers.txt')
 
-def load_face(fname):
-    im = Image.open(fname).convert('L')
-    print im.size
-    return im.getdata()
+def load_faces():
+    index = {}
+    for fname in sorted(glob.glob('yalefaces/subject*')):
+        bname = os.path.basename(fname) 
+        subject, condition = bname.split('.', 1)
+        im = Image.open(fname).convert('L')
+        index.setdefault(subject, []).append(im)
+        index.setdefault(condition, []).append(im)
+        index.setdefault('all', []).append(im)
+    return index
 
 def convert_faces():
     with open('yalefaces/all.txt', 'w') as f:
@@ -78,23 +76,24 @@ def convert_faces():
             pixels = map(str, im.getdata())
             print >> f, '%s %s' % (bname, ' '.join(pixels))
 
-def write_yalefaces():
-    faces = [load_face('yalefaces/subject%02d.normal'%i) for i in range(1,16)]
-    print len(faces[0])
-    dump(faces, 'faces.txt')
+def load_txt_face(line):
+    data = [int(float(i)) for i in line.split()]
+    return create_image(data, (320, 243))
 
-def show_eigenface(fname):
-    faces = [ [int(float(i)) for i in line.split()]
-        for line in open(fname) ]
-    for face in faces:
-        im = create_image(face, (320, 243))
-        im.show()
+def show_eigenface():
+    faces = [ load_txt_face(line).resize((320/4, 243/4))
+        for line in open('eigenfaces.txt') ]
+    array(faces, 10, 13).show()
 
+show_eigenface()
 #write_yalefaces()
 #show_eigenface('eigenface.txt')
 #show_eigenface('meanface.txt')
-convert_faces()
+#convert_faces()
 
+#faces = load_faces()
+#array(faces['normal'], 4, 4).show()
+#array(faces['subject07'], 3, 4).show()
 
 #TODO:
 # numpy for input, output
