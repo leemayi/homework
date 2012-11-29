@@ -1,4 +1,6 @@
+import os
 import math
+import glob
 from struct import unpack, pack
 from PIL import Image
 
@@ -18,10 +20,11 @@ def read_images(fname):
         return (rows, cols), [ unpack(fmt, f.read(pixels))
             for _ in xrange(total) ]
 
-def create_image(data, size):
+def create_image(data, size, reverse=False):
     fmt = '%dB' % len(data)
-    data2 = [ (255-i) for i in data ]
-    buf = pack(fmt, *data2)
+    if reverse:
+        data = [ (255-i) for i in data ]
+    buf = pack(fmt, *data)
     im = Image.fromstring('L', size, buf)
     return im
 
@@ -49,45 +52,49 @@ def array(images):
     return im
 
 
-def write_numbers(data):
-    with open('numbers.txt', 'w') as f:
+def dump(data, fname):
+    with open(fname, 'w') as f:
         for im in data:
             line = ' '.join([ str(p) for p in im ])
             f.write(line+'\n')
 
-def test():
+def write_numbers():
     n = 16
     labels = read_labels('MNIST/t10k-labels-idx1-ubyte')[:n]
     size, data = read_images('MNIST/t10k-images-idx3-ubyte')
     data = data[:n]
-
-    if True:
-        write_numbers(data)
-    else:
-        images = [ create_image(i, size) for i in data ]
-        panel = array(images)
-
-        print labels
-        panel.show()
-
-
-
-def test2():
-    data = [int(float(line)) for line in open('mean.txt')]
-    #im = create_image(data, (28,28))
-    im = create_image(data, (320, 243))
-    im.show()
+    dump(data, 'numbers.txt')
 
 def load_face(fname):
     im = Image.open(fname).convert('L')
     print im.size
     return im.getdata()
 
+def convert_faces():
+    with open('yalefaces/all.txt', 'w') as f:
+        for fname in glob.glob('yalefaces/subject*'):
+            im = Image.open(fname).convert('L')
+            bname = os.path.basename(fname)
+            pixels = map(str, im.getdata())
+            print >> f, '%s %s' % (bname, ' '.join(pixels))
 
-def test3():
+def write_yalefaces():
     faces = [load_face('yalefaces/subject%02d.normal'%i) for i in range(1,16)]
     print len(faces[0])
-    write_numbers(faces)
+    dump(faces, 'faces.txt')
+
+def show_eigenface(fname):
+    faces = [ [int(float(i)) for i in line.split()]
+        for line in open(fname) ]
+    for face in faces:
+        im = create_image(face, (320, 243))
+        im.show()
+
+#write_yalefaces()
+#show_eigenface('eigenface.txt')
+#show_eigenface('meanface.txt')
+convert_faces()
 
 
-test2()
+#TODO:
+# numpy for input, output
