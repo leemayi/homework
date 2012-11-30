@@ -2,6 +2,7 @@ dump.file <- function(a, fname) { write.table(a, fname, row.names=F, col.names=F
 toFF <- function(a) { a=a-min(a); a*255/max(a) }
 dist <- function(i, j) {sum((i-j)**2)}
 predict <- function(x) { which.min(apply(training_weights, 2, function(i) {dist(i,x)})) }
+shuffle <- function(a) { a[sample.int(length(a), length(a))] }
 
 faces <- read.table('yalefaces/all2.txt')
 data <- faces[,-1]
