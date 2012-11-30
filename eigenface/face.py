@@ -95,13 +95,12 @@ def load_faces():
     return index
 
 def convert_faces():
-    with open('yalefaces/all.txt', 'w') as f:
-        for fname in glob.glob('yalefaces/subject*'):
-            im = Image.open(fname).convert('L')
-            bname = os.path.basename(fname)
-            subject, condition = bname.split('.', 1)
-            pixels = map(str, im.getdata())
-            print >> f, '%s %s %s' % (subject, condition, ' '.join(pixels))
+    for fname in glob.glob('yalefaces/subject*'):
+        im = Image.open(fname).convert('L')
+        bname = os.path.basename(fname)
+        subject, condition = bname.split('.', 1)
+        pixels = map(str, im.getdata())
+        print '%s %s %s' % (subject, condition, ' '.join(pixels))
 
 size = (320, 243)
 def load_txt_face(line):
@@ -122,7 +121,7 @@ def check_result():
         face = load_txt_face(data)
         faces.append(face)
 
-    M = 100
+    M = 90
     group = []
     for line in open('all.dist.txt'):
         group.append(faces[M])
@@ -149,13 +148,13 @@ def browse_faces():
         if group in idx:
             grid(idx[group]).show()
 
-def shuffle_lines(namein, nameout):
-    data = open(namein).readlines()
+def shuffle_lines():
+    data = sys.stdin.readlines()
     random.shuffle(data)
-    open(nameout, 'w').writelines(data)
+    sys.stdout.writelines(data)
 
-
+#convert_faces()
 #browse_faces()
-shuffle_lines('yalefaces/all2.txt', 'datain.txt')
+#shuffle_lines()
 #show_eigenfaces()
 #check_result()

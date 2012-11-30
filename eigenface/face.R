@@ -6,7 +6,7 @@ labels <- faces[,1]
 
 total <- dim(data)[1]
 N <- dim(data)[2]
-M <- 100
+M <- 90
 
 training <- t(data[1:M,])
 testing <- t(data[(M+1):total,])
