@@ -101,14 +101,17 @@ def convert_faces():
             pixels = map(str, im.getdata())
             print >> f, '%s %s %s' % (subject, condition, ' '.join(pixels))
 
+size = (320, 243)
 def load_txt_face(line):
     data = [int(float(i)) for i in line.split()]
-    return create_image(data, (320, 243))
+    return create_image(data, size)
 
-def show_eigenface():
-    faces = [ load_txt_face(line).resize((320/4, 243/4))
-        for line in open('eigenfaces.txt') ]
-    grid(faces, 10, 13).show()
+def show_eigenfaces():
+    meanface = load_txt_face(open('meanface.txt').readline())
+    meanface.show()
+
+    eigenfaces = map(load_txt_face, open('eigenfaces.txt').readlines())
+    grid(eigenfaces).show()
 
 def browse_faces():
     idx = load_faces()
@@ -125,13 +128,6 @@ def browse_faces():
         if group in idx:
             grid(idx[group]).show()
 
-
-browse_faces()
+show_eigenfaces()
+#browse_faces()
 #show_eigenface()
-#write_yalefaces()
-#show_eigenface('eigenface.txt')
-#show_eigenface('meanface.txt')
-#convert_faces()
-
-#TODO:
-# numpy for input, output
