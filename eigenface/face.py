@@ -2,6 +2,7 @@ import os
 import sys
 import math
 import glob
+import random
 import subprocess
 from struct import unpack, pack
 from PIL import Image
@@ -50,7 +51,8 @@ def guess_grid(screen_size, image_size, n):
         scale -= .05
     return
 
-def grid(images):
+def grid(images, cols=None):
+    #TODO: given cols
     n = len(images)
     assert n > 0
 
@@ -113,6 +115,25 @@ def show_eigenfaces():
     eigenfaces = map(load_txt_face, open('eigenfaces.txt').readlines())
     grid(eigenfaces).show()
 
+def check_result():
+    faces = []
+    for line in open('datain.txt'):
+        sub, cond, data = line.split(' ', 2)
+        face = load_txt_face(data)
+        faces.append(face)
+
+    M = 100
+    group = []
+    for line in open('all.dist.txt'):
+        group.append(faces[M])
+        M += 1
+        similar = sorted(enumerate(map(float, line.split())), key=lambda i:i[1])[:3]
+        for idx, dist in similar:
+            group.append(faces[idx])
+        group.append(Image.new('1', size))
+    grid(group).show()
+
+
 def browse_faces():
     idx = load_faces()
     subjects = sorted([g[len('subject'):] for g in idx if g.startswith('subject')])
@@ -128,6 +149,13 @@ def browse_faces():
         if group in idx:
             grid(idx[group]).show()
 
-show_eigenfaces()
+def shuffle_lines(namein, nameout):
+    data = open(namein).readlines()
+    random.shuffle(data)
+    open(nameout, 'w').writelines(data)
+
+
 #browse_faces()
-#show_eigenface()
+shuffle_lines('yalefaces/all2.txt', 'datain.txt')
+#show_eigenfaces()
+#check_result()

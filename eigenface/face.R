@@ -1,11 +1,6 @@
-dump.file <- function(a, fname) { write.table(a, fname, row.names=F, col.names=F) }
-toFF <- function(a) { a <- a-min(a); a*255/max(a) }
-dist <- function(i, j) {sum((i-j)**2)}
-predict <- function(x) { which.min(apply(training_weights, 2, function(i) {dist(i,x)})) }
-shuffle <- function(a) { m <- dim(a)[1]; p <- sample.int(m,m); a[p,] }
-
 faces <- read.table('datain.txt')
-faces <- shuffle(faces)
+#shuffle <- function(a) { m <- dim(a)[1]; p <- sample.int(m,m); a[p,] }
+#faces <- shuffle(faces)
 data <- faces[,c(-1, -2)]
 labels <- faces[,1]
 
@@ -15,9 +10,10 @@ M <- 100
 
 training <- t(data[1:M,])
 testing <- t(data[(M+1):total,])
-testing_labels <- labels[(M+1):total]
+testing.labels <- labels[(M+1):total]
 
 mean.face <- apply(training, 1, sum) / M
+dump.file <- function(a, fname) { write.table(a, fname, row.names=F, col.names=F) }
 dump.file(t(mean.face), 'meanface.txt')
 
 A <- apply(training, 2, function(i) {i-mean.face})
@@ -28,14 +24,23 @@ u <- A %*% e$ve
 cca <- e$va/sum(e$va)
 ca <- cumsum(cca)
 dump.file(t(cbind(e$va, cca, ca)), 'eigenvalues.txt')
+toFF <- function(a) { a <- a-min(a); a*255/max(a) }
 dump.file(t(apply(u, 2, toFF)), 'eigenfaces.txt')
 
 k <- which.max(ca>.9)
 R <- u[,1:k]
 
-training_weights <- t(R) %*% A
-testing_weights <- t(R) %*% apply(testing, 2, function(i) {i-mean.face})
+training.weights <- t(R) %*% A
+testing.weights <- t(R) %*% apply(testing, 2, function(i) {i-mean.face})
 
-pr <- labels[apply(testing_weights, 2, predict)]
-pr == testing_labels
-correct_ratio <- sum(pr == testing_labels) / length(pr)
+dist <- function(i, j) {sum((i-j)**2)}
+predict <- function(x) { which.min(apply(training.weights, 2, function(i) {dist(i,x)})) }
+
+pr <- labels[apply(testing.weights, 2, predict)]
+pr == testing.labels
+correct.ratio <- sum(pr == testing.labels) / length(pr)
+
+cal.dist <- function(x) { apply(training.weights, 2, function(i) { dist(i, x) }) }
+all.dist <- apply(testing.weights, 2, cal.dist)
+
+dump.file(t(all.dist), "all.dist.txt")
