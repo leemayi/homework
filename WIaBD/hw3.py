@@ -1,10 +1,12 @@
 import re
+import time
 import glob
 import stopwords
 
 
-source = dict((fname, open(fname).read())
-    for fname in glob.glob('hw3data/*'))
+source = dict([(fname, open(fname).read())
+    for fname in glob.glob('hw3data/*')])
+print len(source)
 
 SEP = re.compile(r'[^a-zA-Z1-9]+')
 
@@ -19,30 +21,13 @@ def split(title):
 def ommit(word):
     return len(word) < 2 or word in stopwords.allStopWords
 
-def mapfn1(fname, content):
-    for line in content.splitlines():
-        titile, authors = parse(line)
-
-        for word in split(title):
-            word = word.lower()
-            if ommit(word):
-                continue
-
-            for auth in authors:
-                yield ':::'.join([auth, word]), 1
-
-def reducefn1(key, value):
-    return key, len(value)
-
-def final1(key, count):
-    author, word = key.split(':::', 1)
-    print '%40s %5d %20s' % (author, count, word)
-
 def mapfn(fname, content):
+    print 'mapper start', time.time()
     for line in content.splitlines():
         title, authors = parse(line)
         for author in authors:
             yield author, title
+    print 'mapper exit', time.time()
 
 def reducefn(author, titles):
     wc = {}
