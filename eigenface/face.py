@@ -2,32 +2,17 @@ import os
 import sys
 import math
 import glob
-import random
 import subprocess
-from struct import unpack, pack
+from struct import pack
 from PIL import Image
 
 
 def screen_size():
     output = subprocess.check_output("xrandr | grep \\* | cut -d' ' -f4", shell=True)
-    return map(int, output.strip().split('x', 1))
+    res = output.splitlines()[-1]
+    return map(int, res.split('x', 1))
 
-def read_labels(fname):
-    with open(fname) as f:
-        magic, total = unpack('>2I', f.read(4*2))
-        assert magic == 2049
-        return unpack('%dB' % total, f.read(total))
-
-def read_images(fname):
-    with open(fname) as f:
-        magic, total, rows, cols = unpack('>4I', f.read(4*4))
-        assert magic == 2051
-        pixels = rows * cols
-        fmt = '%dB' % pixels
-        return (rows, cols), [ unpack(fmt, f.read(pixels))
-            for _ in xrange(total) ]
-
-def create_image(data, size, reverse=False):
+def create_image(data, reverse=False):
     fmt = '%dB' % len(data)
     if reverse:
         data = [ (255-i) for i in data ]
@@ -58,7 +43,7 @@ def grid(images, cols=None):
 
     ss = map(lambda i:int(i*.9), screen_size())
     (rows, cols), (w, h) = guess_grid(ss, images[0].size, n)
-    print 'show %d images by (%d, %d)' % (n, rows, cols)
+    print >> sys.stderr, 'show %d images by (%d, %d)' % (n, rows, cols)
     size = (w*cols, h*rows)
 
     im = Image.new(images[0].mode, size)
@@ -69,19 +54,6 @@ def grid(images, cols=None):
                 break
             im.paste(images[i].resize((w, h)), (w*c, h*r))
     return im
-
-def dump(data, fname):
-    with open(fname, 'w') as f:
-        for im in data:
-            line = ' '.join([ str(p) for p in im ])
-            f.write(line+'\n')
-
-def write_numbers():
-    n = 16
-    labels = read_labels('MNIST/t10k-labels-idx1-ubyte')[:n]
-    size, data = read_images('MNIST/t10k-images-idx3-ubyte')
-    data = data[:n]
-    dump(data, 'numbers.txt')
 
 def load_faces():
     index = {}
@@ -103,13 +75,14 @@ def convert_faces():
         print '%s %s %s' % (subject, condition, ' '.join(pixels))
 
 size = (320, 243)
+#size = (28, 28)
 def load_txt_face(line):
     data = [int(float(i)) for i in line.split()]
     return create_image(data, size)
 
 def show_eigenfaces():
     meanface = load_txt_face(open('meanface.txt').readline())
-    meanface.show()
+    #meanface.show()
 
     eigenfaces = map(load_txt_face, open('eigenfaces.txt').readlines())
     grid(eigenfaces).show()
@@ -118,6 +91,7 @@ def check_result():
     faces = []
     for line in open('datain.txt'):
         sub, cond, data = line.split(' ', 2)
+        #sub, data = line.split(' ', 1)
         face = load_txt_face(data)
         faces.append(face)
 
@@ -131,7 +105,6 @@ def check_result():
             group.append(faces[idx])
         group.append(Image.new('1', size))
     grid(group).show()
-
 
 def browse_faces():
     idx = load_faces()
@@ -148,13 +121,9 @@ def browse_faces():
         if group in idx:
             grid(idx[group]).show()
 
-def shuffle_lines():
-    data = sys.stdin.readlines()
-    random.shuffle(data)
-    sys.stdout.writelines(data)
 
-#convert_faces()
-#browse_faces()
-#shuffle_lines()
-#show_eigenfaces()
-#check_result()
+if __name__ == '__main__':
+    #convert_faces()
+    #browse_faces()
+    #show_eigenfaces()
+    check_result()

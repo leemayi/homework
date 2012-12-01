@@ -2,6 +2,7 @@ faces <- read.table('datain.txt')
 #shuffle <- function(a) { m <- dim(a)[1]; p <- sample.int(m,m); a[p,] }
 #faces <- shuffle(faces)
 data <- faces[,c(-1, -2)]
+#data <- faces[,c(-1)]
 labels <- faces[,1]
 
 total <- dim(data)[1]
