@@ -18,37 +18,6 @@ def histeq(im, nbr_bins=256):
     im2 = interp(im.flatten(), bins[:-1], cdf)
     return im2.reshape(im.shape), cdf
 
-def histeq2(im):
-    dim = im.shape
-    hist = [0]*256
-    im = im.flatten()
-    for level in im:
-        hist[level] += 1
-
-    cdf = hist
-    for i in range(1, len(hist)):
-        cdf[i] += cdf[i-1]
-
-    cdf_min = None
-    h = cdf
-    for v, cdfv in enumerate(cdf):
-        if cdfv == 0:
-            continue
-        if cdf_min is None:
-            cdf_min = cdfv
-        h[v] = round(255. * (cdfv - cdf_min) / (cdf[-1] - cdf_min))
-
-    for i, v in enumerate(im):
-        im[i] = h[v]
-    return im.reshape(dim)
-
-
-def showim(im):
-    img = Image.fromarray(im)
-    img.show()
-    return img
-
-
 def compute_average(imlist):
     averageim = array(Image.open(imlist[0]), 'f')
 
