@@ -18,6 +18,7 @@ numpy
 scipy
 sympy
 networkX
+libsvm
 
 lxml
 BeautifulSoup
