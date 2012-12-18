@@ -69,8 +69,14 @@ def my_gaussian_filter(input, sigma):
     im = convolution(input, weights, 0)
     return convolution(im, weights, 1)
 
+def my_sobel(input):
+    im = convolution(input, [1,2,1], 0)
+    return convolution(im, [1,0,-1], 1)
+
+
 def main():
-    img = Image.open('data/empire.jpg').convert('L')
+    fname = 'data/empire.jpg'
+    img = Image.open(fname).convert('L')
     im = array(img)
 
     sigma = 3
@@ -79,7 +85,14 @@ def main():
 
     grid([img, toimg(im2), toimg(im3)]).show()
 
+def test():
+    fname = '/home/huanghao/Pictures/Photos/David-Bowie-I.jpg'
+    im = array(Image.open(fname).convert('L'))
+
+    im2 = my_sobel(im)
+    showim(im2).convert('L').save('head.jpg')
+
 
 
 if __name__ == '__main__':
-    main()
+    test()

@@ -19,6 +19,8 @@ scipy
 sympy
 networkX
 libsvm
+pyglet
+sage
 
 lxml
 BeautifulSoup
