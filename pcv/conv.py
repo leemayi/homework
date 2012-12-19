@@ -70,12 +70,9 @@ def _conv_line(input, weights, output):
                 sum += input[j] * weights[j-i+lw]
         output[i] = sum
 
-def convolution(im, weights, axis=0, output=None):
-    if output:
-        im2 = output
-    else:
-        im2 = _make_output(im)
-
+def convolution(im, weights, axis=0):
+    weights = weights[::-1]
+    im2 = _make_output(im)
     for i in range(im.shape[axis]):
         if axis == 0:
             _conv_line(im[i,:], weights, im2[i,:])
@@ -83,40 +80,49 @@ def convolution(im, weights, axis=0, output=None):
             _conv_line(im[:,i], weights, im2[:,i])
     return im2
 
-def my_gaussian_filter1d(input, sigma, axis=0):
-    weights = kernel(sigma)
-    return convolution(im, weights, axis)
-
-def my_gaussian_filter(input, sigma, order=0):
+def my_gaussian_filter1d(input, sigma, axis=0, order=0):
     weights = kernel(sigma, order)
-    im = convolution(input, weights, 0)
-    return convolution(im, weights, 1)
+    return convolution(input, weights, axis)
+
+def my_gaussian_filter(input, sigma, orders=(0, 0)):
+    xweights = kernel(sigma, orders[0])
+    yweights = kernel(sigma, orders[1])
+    im = convolution(input, xweights, 0)
+    return convolution(im, yweights, 1)
 
 def my_sobel(input):
     im = convolution(input, [1,2,1], 0)
     return convolution(im, [1,0,-1], 1)
 
 
-def main():
-    fname = 'data/empire.jpg'
-    fname = '/home/huanghao/Downloads/title.png'
-    img = Image.open(fname).convert('L')
-    im = array(img)
-
+def test_my_gaussian():
+    fname = '/home/huanghao/Pictures/Photos/David-Bowie-I.jpg'
+    im = array(Image.open(fname).convert('L'))
     sigma = 1
-    im2 = my_gaussian_filter(im, sigma, 0)
+
+    im2 = convolution(im, kernel(sigma, 1), 1)
+    #im2 = filters.gaussian_filter1d(im, 1, 0, 1)
     showim(im2)
-    #im3 = filters.gaussian_filter(im, sigma)
 
-    #grid([img, toimg(im2), toimg(im3)]).show()
-
-def test():
+def test_my_sobel():
     fname = '/home/huanghao/Pictures/Photos/David-Bowie-I.jpg'
     im = array(Image.open(fname).convert('L'))
 
     im2 = my_sobel(im)
     showim(im2).convert('L').save('head.jpg')
 
+def main():
+    fname = sys.argv[1]
+    im = array(Image.open(fname).convert('L'))
+
+    imx = zeros(im.shape)
+    filters.sobel(im, 1, imx)
+    imy = zeros(im.shape)
+    filters.sobel(im, 0, imy)
+    mag = sqrt(imx**2 + imy**2)
+    showim(mag)
+
+    saveim(mag, 'test.jpg')
 
 
 if __name__ == '__main__':

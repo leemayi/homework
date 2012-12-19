@@ -2,7 +2,7 @@ import sys
 import math
 import subprocess
 from PIL import Image
-
+import scipy
 
 def screen_size():
     output = subprocess.check_output("xrandr | grep \\* | cut -d' ' -f4", shell=True)
@@ -21,12 +21,13 @@ def guess_grid(screen_size, image_size, n):
         rows = screen_height / height
         if cols * rows >= n:
             rows = int(math.ceil(float(n)/cols))
+            if rows == 1:
+                cols = min(n, cols)
             return (rows, cols), (weight, height)
-        scale -= .05
-    return
+        scale -= .02
 
-def grid(images, cols=None):
-    #TODO: given cols
+def grid(images, cols=None, padding=None):
+    #TODO: given cols, padding
     n = len(images)
     assert n > 0
 
@@ -51,6 +52,9 @@ def showim(im):
 
 def toimg(im):
     return Image.fromarray(im)
+
+def saveim(im, fname):
+    return scipy.misc.imsave(fname, im)
 
 def histeq2(im):
     dim = im.shape
