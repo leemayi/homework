@@ -45,6 +45,9 @@ def grid(images, cols=None, padding=None):
             im.paste(images[i].resize((w, h)), (w*c, h*r))
     return im
 
+def gridim(ims):
+    return grid(map(toimg, ims))
+
 def showim(im):
     img = Image.fromarray(im)
     img.show()
