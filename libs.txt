@@ -1,19 +1,14 @@
-*python-decorator
-importlib
-parsedatetime
+twisted
+*gevent
+*tornado
+*greenlet
 
-PIL
-*cario
-*opencv
-opengl
-
-*pyaudio
-*pygame
-*pygpu
-
-*sphinx
-
-*xiapan
+ipython
+virtualenv
+pygments: syntax highlight
+optcomplete
+babel
+scons
 
 pyrrd
 *pychart
@@ -35,6 +30,21 @@ nltk
 rpy
 openopt
 
+*sphinx
+
+swig
+
+PIL
+*cario
+*opencv
+opengl
+
+pyaudio
+pygame
+pygpu
+
+*xiapan
+
 tkinter
 wxWidgets
 ttystatus
@@ -44,28 +54,24 @@ BeautifulSoup
 htmlgen
 html2text
 
-mako
-markdown
-yaml
-
-twisted
-*gevent
-*tornado
-*greenlet
-
 django
-pinax
 bottle
 webpy
-*zope
+pinax
+pyquery
+zope
 *cherrypy
 *cheetah
 *flup
 pesto
-pyquery
 
-pylons
-zope
+wsgi
+cgi
+fastcgi
+gunicorn
+
+*pylons
+*zope
 
 MySQLdb
 SQLAlchemy
@@ -98,19 +104,16 @@ openid
 pexpect
 ply
 pycurl
-
-ipython
-virtualenv
-pygments 
-optcomplete
+python-daemon
+lockfile
 
 *rpm
 *setuptools
 distutils
 peak
-
-simplejson
-cjson
+pypi
+pip
+easy_install
 
 nose
 coverage
@@ -132,5 +135,17 @@ problem-report
 ptrace
 zmq
 
-2012-12-31 scons 
-2013-01-01 python-daemon, lockfile
+-------------------------
+python-decorator
+importlib
+parsedatetime
+
+mako
+genshi
+jinja2
+markdown
+markupsafe
+
+yaml
+simplejson
+cjson
