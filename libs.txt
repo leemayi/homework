@@ -1,21 +1,27 @@
-scons
+*python-decorator
+importlib
+parsedatetime
 
 PIL
-
-*opencv
 *cario
-*pychart
+*opencv
+opengl
+
 *pyaudio
 *pygame
 *pygpu
+
 *sphinx
+
 *xiapan
+
+pyrrd
+*pychart
 *gnuplot
-
-tkinter
-wxWidgets
-
+pygraphviz
+gvgen
 matplotlib
+
 numpy
 scipy
 sympy
@@ -23,9 +29,24 @@ networkX
 libsvm
 pyglet
 sage
+pebl
+nltk
+*libsvm
+rpy
+openopt
+
+tkinter
+wxWidgets
+ttystatus
 
 lxml
 BeautifulSoup
+htmlgen
+html2text
+
+mako
+markdown
+yaml
 
 twisted
 *gevent
@@ -40,6 +61,11 @@ webpy
 *cherrypy
 *cheetah
 *flup
+pesto
+pyquery
+
+pylons
+zope
 
 MySQLdb
 SQLAlchemy
@@ -49,6 +75,8 @@ couchdb
 memcache
 sqlite
 pickle
+PostgreSQL
+pytc
 
 fabric
 
@@ -63,8 +91,7 @@ fabric
 *gobject-2
 *oauth
 *oauth-2
-
-*libsvm
+openid
 
 *meld3
 
@@ -72,12 +99,15 @@ pexpect
 ply
 pycurl
 
-
 ipython
 virtualenv
+pygments 
+optcomplete
 
 *rpm
 *setuptools
+distutils
+peak
 
 simplejson
 cjson
@@ -88,42 +118,19 @@ fudge
 mock
 doctest
 
-*python-daemon
-*python-decorator
-htmlgen
-html2text
-gvgen
 id3
 imdbpy
-importlib
-libproxy
-lockfile
 lunar
-mako
-markdown
 messaging
-nltk
-opengl
-openid
-openopt
+
+libproxy
 openstack
-optcomplete
-parsedatetime
 pdfminer
-peak
-pebl
-pesto
 pocket-lint
 pocketsphinx
 problem-report
-PostgreSQL
 ptrace
-pygments 
-pygraphviz
-pyquery
-pyrrd
-pytc
-rpy
-ttystatus
-yaml
 zmq
+
+2012-12-31 scons 
+2013-01-01 python-daemon, lockfile
