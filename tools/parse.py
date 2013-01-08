@@ -5,7 +5,7 @@ from BeautifulSoup import BeautifulSoup as BS
 
 
 def esc(txt):
-    txt = txt.strip()
+    txt = txt.replace('&nbsp;', ' ').strip()
     txt = re.sub(r'[^a-zA-Z0-9_]', '_', txt)
     txt = re.sub(r'_+', '_', txt)
     txt = txt.strip('_')
@@ -14,14 +14,14 @@ def esc(txt):
 
 def parse():
     soup = BS(open('index').read())
-    for item in soup.findAll('a', 'list_header_link'):
-        section = esc(item.find('h3').string)
+    for item in soup.findAll('div', 'course-item-list-header'):
+        section = esc(item.find('h3').next.next)
         ul = item.nextSibling
 
         print 'echo "downloading %s"' % section
         print 'mkdir -p %s' % section
         for lecture_link in ul.findAll('a', 'lecture-link'):
-            links = lecture_link.parent.find('div', 'item_resource').findAll('a')
+            links = lecture_link.parent.find('div', 'course-lecture-item-resource').findAll('a')
             script_link = links[-2]
             download_link = links[-1]
 

@@ -143,6 +143,7 @@ parsedatetime
 mako
 genshi
 jinja2
+http://docs.cherrypy.org/stable/progguide/choosingtemplate.html
 markdown
 markupsafe
 
