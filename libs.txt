@@ -1,3 +1,7 @@
+pychecker
+PyWinAuto
+http://pyjs.org/
+
 twisted
 *gevent
 *tornado
