@@ -36,11 +36,12 @@ def parse():
 
             print '''if [ ! -e "%s" ]; then
     wget --no-cookies --header "Cookie: $(cat cookies.txt)" '%s' -O '%s'
+fi''' % (fname, href, fname)
+
+            print '''if [ ! -e "%s" ]; then
     wget --no-cookies --header "Cookie: $(cat cookies.txt)" '%s' -O '%s'
-fi''' % (fname,
-    href, fname,
-    shref, sfname,
-    )
+fi''' % (sfname, shref, sfname)
+
             print
 
 parse()
