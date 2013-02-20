@@ -1,3 +1,7 @@
+hotshot
+profile
+
+
 pandas
 
 pychecker
