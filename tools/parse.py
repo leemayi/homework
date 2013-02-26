@@ -22,23 +22,23 @@ def parse():
         print 'mkdir -p %s' % section
         for lecture_link in ul.findAll('a', 'lecture-link'):
             links = lecture_link.parent.find('div', 'course-lecture-item-resource').findAll('a')
-            script_link = links[-2]
-            download_link = links[-1]
-
             title = esc(lecture_link.next)
 
+            download_link = links[-1]
             href = download_link['href'] 
             subfix = os.path.basename(href).split('?', 1)[0].split('.')[-1]
             fname = os.path.join(section, '%s.%s' % (title, subfix))
-
-            shref = script_link['href']
-            sfname = os.path.join(section, '%s.srt' % (title))
-
             print '''if [ ! -e "%s" ]; then
     wget --no-cookies --header "Cookie: $(cat cookies.txt)" '%s' -O '%s'
 fi''' % (fname, href, fname)
 
-            print '''if [ ! -e "%s" ]; then
+
+            if len(links) >= 2:
+                script_link = links[-2]
+                shref = script_link['href']
+                if shref.find('srt') > 0:
+                    sfname = os.path.join(section, '%s.srt' % (title))
+                    print '''if [ ! -e "%s" ]; then
     wget --no-cookies --header "Cookie: $(cat cookies.txt)" '%s' -O '%s'
 fi''' % (sfname, shref, sfname)
 

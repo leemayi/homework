@@ -1,7 +1,6 @@
 hotshot
 profile
 
-
 pandas
 
 pychecker
@@ -95,6 +94,7 @@ PostgreSQL
 pytc
 
 fabric
+paramiko: http://www.lag.net/paramiko/
 
 *ctypes
 
