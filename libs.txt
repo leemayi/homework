@@ -10,7 +10,14 @@ http://pyjs.org/
 twisted
 *gevent
 *tornado
-*greenlet
+stackless/greenlet
+
+requests
+tablib
+legit
+clint
+envoy
+httpbin.org
 
 ipython
 virtualenv
@@ -145,7 +152,6 @@ problem-report
 ptrace
 zmq
 
--------------------------
 python-decorator
 importlib
 parsedatetime
