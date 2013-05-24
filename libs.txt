@@ -101,12 +101,12 @@ PostgreSQL
 pytc
 
 fabric
-paramiko: http://www.lag.net/paramiko/
 
 *ctypes
 
 *crypto
 *m2crypto
+paramiko: http://www.lag.net/paramiko/
 
 *openssl
 
@@ -166,3 +166,63 @@ markupsafe
 yaml
 simplejson
 cjson
+
+netaddr: http://pythonhosted.org/netaddr/
+python-amqplib
+python-amqplib-doc
+python-anyjson
+python-beautifulsoup
+python-boto
+python-carrot
+python-cherrypy3
+python-dateutil
+python-dingus
+python-distro-info
+python-dns
+python-docutils
+python-egenix-mxdatetime
+python-egenix-mxdatetime-dbg
+python-egenix-mxdatetime-doc
+python-egenix-mxtools
+python-egenix-mxtools-dbg
+python-egenix-mxtools-doc
+python-eventlet
+python-feedparser
+python-formencode
+python-gflags
+python-imaging
+python-imaging-dbg
+python-imaging-doc
+python-iso8601
+python-kinterbasdb
+python-kombu
+python-kombu-doc
+python-libvirt
+python-libxml2
+python-logilab-astng
+python-logilab-common
+python-markdown
+python-markupsafe
+python-migrate
+python-mox
+python-openid
+python-paste
+python-pastedeploy
+python-pastescript
+python-pastewebkit
+python-pgsql
+python-pika
+python-psycopg2
+python-pygments
+python-pymongo
+python-pymssql
+python-repoze.lru
+python-roman
+python-routes
+python-scgi
+python-stompy
+python-suds
+python-tempita
+python-utidylib
+python-webob
+python-xattr
