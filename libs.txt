@@ -11,8 +11,10 @@ twisted
 *gevent
 *tornado
 stackless/greenlet
+scrapy
 
 requests
+requests-cache
 tablib
 legit
 clint
@@ -69,6 +71,8 @@ lxml
 BeautifulSoup
 htmlgen
 html2text
+cssselect
+pyquery
 
 django
 bottle
