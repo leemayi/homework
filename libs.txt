@@ -23,10 +23,13 @@ httpbin.org
 
 ipython
 virtualenv
+pybrew
 pygments: syntax highlight
 optcomplete
 babel
 scons
+
+psyco
 
 pyrrd
 *pychart
@@ -78,20 +81,24 @@ django
 bottle
 webpy
 pinax
-pyquery
 zope
 *cherrypy
-*cheetah
-*flup
 pesto
+*pylons
+
+mako
+genshi
+jinja2
+http://docs.cherrypy.org/stable/progguide/choosingtemplate.html
+markdown
+markupsafe
+*cheetah
 
 wsgi
 cgi
 fastcgi
 gunicorn
-
-*pylons
-*zope
+*flup
 
 MySQLdb
 SQLAlchemy
@@ -159,13 +166,6 @@ zmq
 python-decorator
 importlib
 parsedatetime
-
-mako
-genshi
-jinja2
-http://docs.cherrypy.org/stable/progguide/choosingtemplate.html
-markdown
-markupsafe
 
 yaml
 simplejson
