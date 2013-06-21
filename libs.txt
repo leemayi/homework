@@ -95,6 +95,7 @@ markupsafe
 *cheetah
 
 wsgi
+WebOb: WSGI request and response objects
 cgi
 fastcgi
 gunicorn
