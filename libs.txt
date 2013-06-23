@@ -12,6 +12,9 @@ twisted
 *tornado
 stackless/greenlet
 scrapy
+w3lib
+pyOpenSSL
+
 
 requests
 requests-cache
@@ -82,6 +85,7 @@ bottle
 webpy
 pinax
 zope
+zope.interface
 *cherrypy
 pesto
 *pylons
@@ -231,3 +235,5 @@ python-tempita
 python-utidylib
 python-webob
 python-xattr
+
+pywin32
