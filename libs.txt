@@ -26,7 +26,8 @@ httpbin.org
 
 ipython
 virtualenv
-pybrew
+virtualenvwrapper
+pythonbrew
 pygments: syntax highlight
 optcomplete
 babel
@@ -237,3 +238,6 @@ python-webob
 python-xattr
 
 pywin32
+pyrex: http://ldots.org/pyrex-guide/
+celery: http://celeryproject.org/
+Supervisor: A Process Control System: http://supervisord.org/
