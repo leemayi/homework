@@ -249,3 +249,7 @@ celery: http://celeryproject.org/
 	python-dateutil==2.1
 	six==1.3.0
 Supervisor: A Process Control System: http://supervisord.org/
+RabbitMQ
+	py-amqplib
+	txAMQP
+	pika
