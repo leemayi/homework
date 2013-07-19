@@ -1,13 +1,13 @@
 hotshot
 profile
 
-pandas
-
 pychecker
 PyWinAuto
 http://pyjs.org/
 
+netaddr: http://pythonhosted.org/netaddr/ Pythonic manipulation of IPv4, IPv6, CIDR, EUI and MAC network addresses
 twisted
+python-eventlet: Highly concurrent networking library
 *gevent
 *tornado
 stackless/greenlet
@@ -15,13 +15,19 @@ scrapy
 w3lib
 pyOpenSSL
 
+python-egenix-mxdatetime
+python-egenix-mxdatetime-dbg
+python-egenix-mxdatetime-doc
+python-egenix-mxtools
+python-egenix-mxtools-dbg
+python-egenix-mxtools-doc
 
+pycurl
 requests
 requests-cache
-tablib
-legit
-clint
-envoy
+tablib: Pythonic Tabular Datasets
+legit: git wrapper
+clint: Command Line INterface Tool
 httpbin.org
 
 ipython
@@ -30,7 +36,7 @@ virtualenvwrapper
 pythonbrew
 pygments: syntax highlight
 optcomplete
-babel
+babel: A collection of tools for internationalizing Python applications
 scons
 
 psyco
@@ -39,8 +45,9 @@ pyrrd
 *pychart
 *gnuplot
 pygraphviz
-gvgen
+gvgen: Graphviz Python dot generator
 matplotlib
+pandas: Python Data Analysis Library
 
 numpy
 scipy
@@ -49,20 +56,22 @@ networkX
 libsvm
 pyglet
 sage
-pebl
+pebl: Python Environment For Bayesian Learning
 nltk
-*libsvm
-rpy
-openopt
+rpy: r for python
+openopt: focus on scientific/engineering software development using RAD abilities of Python language, accompanied with free scientific libraries such as NumPy and SciPy.
 
 *sphinx
+python-docutils
 
-swig
 
 PIL
 *cario
 *opencv
 opengl
+python-imaging: Provides image processing functionality and supports many file formats.
+python-imaging-dbg
+python-imaging-doc
 
 pyaudio
 pygame
@@ -75,6 +84,7 @@ wxWidgets
 ttystatus
 
 lxml
+python-libxml2
 BeautifulSoup
 htmlgen
 html2text
@@ -88,8 +98,17 @@ pinax
 zope
 zope.interface
 *cherrypy
+python-cherrypy3
 pesto
 *pylons
+python-paste
+python-pastedeploy
+python-pastescript
+python-pastewebkit
+python-routes: Routes is a Python re-implementation of the Rails routes system for mapping URLs to application actions, and conversely to generate URLs.
+python-repoze.lru: repoze.lru is a LRU (least recently used) cache implementation.
+
+python-suds: Suds is a lightweight SOAP python client for consuming Web Services.
 
 mako
 genshi
@@ -98,6 +117,7 @@ http://docs.cherrypy.org/stable/progguide/choosingtemplate.html
 markdown
 markupsafe
 *cheetah
+python-tempita: Tempita is a small templating language for text substitution.
 
 wsgi
 WebOb: WSGI request and response objects
@@ -105,9 +125,12 @@ cgi
 fastcgi
 gunicorn
 *flup
+python-webob: WebOb is a Python library that provides wrappers around the WSGI request environment, and an object to help create WSGI responses.
+python-scgi: A Python package for implementing SCGI servers
 
 MySQLdb
 SQLAlchemy
+python-migrate: Database schema migration for SQLAlchemy
 bsddb
 mongo
 couchdb
@@ -116,6 +139,11 @@ sqlite
 pickle
 PostgreSQL
 pytc
+python-pgsql
+python-psycopg2: psycopg2 is a PostgreSQL database adapter for the Python programming language.
+python-pymongo
+python-pymssql: A fast MS SQL Server client library for Python directly using C API instead of ODBC. 
+python-kinterbasdb: KInterbasDB is a Python extension package that implements Python Database API 2.0-compliant support for the open source relational database Firebird® and some versions of its proprietary cousin Interbase®.
 
 fabric
 
@@ -137,9 +165,10 @@ openid
 
 pexpect
 ply
-pycurl
 python-daemon
 lockfile
+Supervisor: A Process Control System: http://supervisord.org/
+envoy: Python Subprocesses for Humans™
 
 *rpm
 *setuptools
@@ -148,16 +177,18 @@ peak
 pypi
 pip
 easy_install
+python-distro-info
 
 nose
 coverage
 fudge
-mock
 doctest
+mock
+python-dingus: A record-then-assert mocking library
+python-mox: a mock object framework for Python
 
 id3
 imdbpy
-lunar
 messaging
 
 libproxy
@@ -171,74 +202,36 @@ zmq
 
 python-decorator
 importlib
+python-roman: Integer to Roman numerals converter
+
 parsedatetime
+lunar
+python-dateutil
+python-iso8601: Simple module to parse ISO 8601 dates
 
 yaml
 simplejson
 cjson
+python-anyjson: Wraps the best available JSON implementation available in a common interface
 
-netaddr: http://pythonhosted.org/netaddr/
-python-amqplib
-python-amqplib-doc
-python-anyjson
-python-beautifulsoup
-python-boto
-python-carrot
-python-cherrypy3
-python-dateutil
-python-dingus
-python-distro-info
+python-boto: boto - Python interface to Amazon Web Services
 python-dns
-python-docutils
-python-egenix-mxdatetime
-python-egenix-mxdatetime-dbg
-python-egenix-mxdatetime-doc
-python-egenix-mxtools
-python-egenix-mxtools-dbg
-python-egenix-mxtools-doc
-python-eventlet
 python-feedparser
 python-formencode
-python-gflags
-python-imaging
-python-imaging-dbg
-python-imaging-doc
-python-iso8601
-python-kinterbasdb
-python-kombu
-python-kombu-doc
+python-gflags: This project is the python equivalent of gflags, a commandline flag implementation for C++ originally written by Google.
 python-libvirt
-python-libxml2
-python-logilab-astng
+python-logilab-astng: Python Abstract Syntax Tree New Generation
 python-logilab-common
-python-markdown
-python-markupsafe
-python-migrate
-python-mox
 python-openid
-python-paste
-python-pastedeploy
-python-pastescript
-python-pastewebkit
-python-pgsql
-python-pika
-python-psycopg2
-python-pygments
-python-pymongo
-python-pymssql
-python-repoze.lru
-python-roman
-python-routes
-python-scgi
-python-stompy
-python-suds
-python-tempita
-python-utidylib
-python-webob
-python-xattr
+python-stompy: Implementation of the STOMP protocol in Python.
+python-utidylib: µTidylib. TidyLib Python wrapper
+python-xattr: xattr is a Python wrapper for the extended attributes APIs available in Darwin 8.0+ (Mac OS X 10.4) and Linux 2.6+.
 
 pywin32
-pyrex: http://ldots.org/pyrex-guide/
+
+swig
+pyrex: http://ldots.org/pyrex-guide/ Pyrex is a Python-like language for rapidly and easily writing python extension modules. It can be described as python with C data types.
+
 celery: http://celeryproject.org/
 	amqp==1.0.12
 	anyjson==0.3.3
@@ -248,8 +241,14 @@ celery: http://celeryproject.org/
 	kombu==2.5.12
 	python-dateutil==2.1
 	six==1.3.0
-Supervisor: A Process Control System: http://supervisord.org/
+
+python-carrot: AMQP Messaging Framework for Python
+python-kombu: Messaging Framework for Python
+python-kombu-doc
+python-amqplib
+python-amqplib-doc
 RabbitMQ
 	py-amqplib
 	txAMQP
 	pika
+	python-pika: Pika is a pure-Python implementation of the AMQP 0-9-1 protocol that tries to stay fairly independent of the underlying network support library.
