@@ -50,6 +50,8 @@ matplotlib
 pandas: Python Data Analysis Library
 
 numpy
+Bottleneck: Fast NumPy array functions written in Cython.
+numexpr: The numexpr package evaluates multiple-operator array expressions many times faster than NumPy can.
 scipy
 sympy
 networkX
@@ -60,6 +62,7 @@ pebl: Python Environment For Bayesian Learning
 nltk
 rpy: r for python
 openopt: focus on scientific/engineering software development using RAD abilities of Python language, accompanied with free scientific libraries such as NumPy and SciPy.
+PyTables: is a package for managing hierarchical datasets and designed to efficiently and easily cope with extremely large amounts of data.
 
 *sphinx
 python-docutils
@@ -208,6 +211,7 @@ parsedatetime
 lunar
 python-dateutil
 python-iso8601: Simple module to parse ISO 8601 dates
+pytz: time zone
 
 yaml
 simplejson
