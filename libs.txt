@@ -50,6 +50,7 @@ matplotlib
 pandas: Python Data Analysis Library
 
 numpy
+numba
 Bottleneck: Fast NumPy array functions written in Cython.
 numexpr: The numexpr package evaluates multiple-operator array expressions many times faster than NumPy can.
 scipy
@@ -64,8 +65,6 @@ rpy: r for python
 openopt: focus on scientific/engineering software development using RAD abilities of Python language, accompanied with free scientific libraries such as NumPy and SciPy.
 PyTables: is a package for managing hierarchical datasets and designed to efficiently and easily cope with extremely large amounts of data.
 
-*sphinx
-python-docutils
 
 
 PIL
@@ -183,12 +182,21 @@ easy_install
 python-distro-info
 
 nose
-coverage
-fudge
+pytest
 doctest
+
+fudge
 mock
-python-dingus: A record-then-assert mocking library
+dingus: A record-then-assert mocking library
 python-mox: a mock object framework for Python
+
+coverage
+tox
+
+pycco: is a Python port of Docco: the original quick-and-dirty, hundred-line-long, literate-programming-style documentation generator.
+ronn
+*sphinx
+python-docutils
 
 id3
 imdbpy
