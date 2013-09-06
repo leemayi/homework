@@ -1,0 +1,6 @@
+$ mkvirtualenv pcv
+$ cd jesolem-PCV-790b64d
+$ python setup.py install
+$ python
+>>> import PCV
+
