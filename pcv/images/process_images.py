@@ -25,8 +25,8 @@ def plot_sift():
         locs, desc = sift.read_features_from_file(sift_filename)
 
         im = get_im(each)
-        pylab.figure()
         sift.plot_features(im, locs, circle=True)
+        pylab.figure()
 
 
 def plot_match():
@@ -38,7 +38,7 @@ def plot_match():
     im1, locs1, desc1 = load(sys.argv[1])
     im2, locs2, desc2 = load(sys.argv[2])
 
-    matchscores = sift.match(desc1, desc2)
+    matchscores = sift.match_twosided(desc1, desc2)
     sift.plot_matches(im1, im2, locs1, locs2, matchscores)
 
 
