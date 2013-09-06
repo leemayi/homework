@@ -9,44 +9,46 @@ from PCV.localdescriptors import sift
 
 
 def get_im(imagename):
-    #return Image.open(imagename)
     return Image.open(imagename).convert('L')
 
 def get_sift_filename(imagename):
     base, ext = os.path.splitext(imagename)
     return '{}.sift'.format(base)
 
-def plot_sift():
-    for each in sys.argv[1:]:
-        sift_filename = get_sift_filename(each)
-        if not os.path.exists(sift_filename):
-            sift.process_image(each, sift_filename)
+def load(filename):
+    sift_filename = get_sift_filename(filename)
+    if not os.path.exists(sift_filename):
+        sift.process_image(each, sift_filename)
 
-        locs, desc = sift.read_features_from_file(sift_filename)
+    im = np.array(get_im(filename))
+    locs, desc = sift.read_features_from_file(sift_filename)
+    return im, locs, desc
 
-        im = get_im(each)
-        sift.plot_features(im, locs, circle=True)
-        pylab.figure()
+def plot_match(imagename1, imagename2):
+    '''Generate SIFT features for two images, plot their
+    features onto the original images and link two-sided
+    matching points with lines
+    '''
+    im1, locs1, desc1 = load(imagename1)
+    im2, locs2, desc2 = load(imagename2)
 
+    pylab.gray()
 
-def plot_match():
-    def load(filename):
-        im = np.array(get_im(filename))
-        locs, desc = sift.read_features_from_file(get_sift_filename(filename))
-        return im, locs, desc
+    # plot features on images
+    sift.plot_features(im1, locs1, circle=True)
+    pylab.figure()
+    sift.plot_features(im2, locs2, circle=True)
+    pylab.figure()
 
-    im1, locs1, desc1 = load(sys.argv[1])
-    im2, locs2, desc2 = load(sys.argv[2])
-
+    # plot matching points
     matchscores = sift.match_twosided(desc1, desc2)
     sift.plot_matches(im1, im2, locs1, locs2, matchscores)
 
+    pylab.show()
+
 
 def main():
-    pylab.gray()
-    plot_sift()
-    plot_match()
-    pylab.show()
+    plot_match(*sys.argv[1:3])
 
 
 if __name__ == '__main__':
