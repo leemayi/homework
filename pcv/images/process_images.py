@@ -24,7 +24,7 @@ def plot_match(imagename1, imagename2, show=True, plot_features=True):
     def load(filename):
         sift_filename = get_sift_filename(filename)
         if not os.path.exists(sift_filename):
-            sift.process_image(each, sift_filename)
+            sift.process_image(filename, sift_filename)
 
         im = np.array(get_im(filename))
         locs, desc = sift.read_features_from_file(sift_filename)
@@ -94,5 +94,5 @@ def find_similar(imagenames):
 
 
 if __name__ == '__main__':
-    #plot_match(sys.argv[1], sys.argv[2])
-    find_similar(sys.argv[1:])
+    plot_match(sys.argv[1], sys.argv[2])
+    #find_similar(sys.argv[1:])
