@@ -23,11 +23,14 @@ def get_sift_filename(imagename):
     base, ext = os.path.splitext(imagename)
     return '{}.sift'.format(base)
 
-def load(filename):
+def process_image(filename):
     sift_filename = get_sift_filename(filename)
     if not os.path.exists(sift_filename):
         sift.process_image(filename, sift_filename)
+    return sift_filename
 
+def load(filename):
+    sift_filename = process_image(filename)
     im = np.array(get_im(filename))
     locs, desc = sift.read_features_from_file(sift_filename)
     return im, locs, desc

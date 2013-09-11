@@ -14,3 +14,5 @@ Install flann
 TODO
 ====
 * image search
+    - too slow when doing kmeans with hundreds of images
+    - mahout ? k-means kdtree clustering ? k-means kd forest clustering ? elkan k-means clustering ? coresets ? triangle inequality
