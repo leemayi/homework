@@ -100,6 +100,18 @@ def zipWithAll[B,C](s2: Stream[B])(f: (Option[A],Option[B]) => C): Stream[C] = {
     }
   }
 
+def tails: Stream[Stream[A]] =
+  unfold(this)(s => s.uncons match {
+    case None => None
+    case Some((h, t)) => Some((s, t))
+    }) append (Stream(empty))
+
+def scanRight[B](z: => B)(f: (A, => B) => B): Stream[B] =
+  foldRight((z, Stream(z)))((a, s) => {
+    val b = f(a, s._1)
+    (b, cons(b, s._2))
+    })._2
+
 }
 
 object Stream {
@@ -136,13 +148,17 @@ val odd: Stream[Int] = unfold(1)((n) => Some(n, n+2))
 val fibs2: Stream[Int] = unfold((0, 1))((s) => Some(s._1, (s._2, s._1 + s._2)))
 def constant2[A](a: A): Stream[A] = unfold(a)(_ => Some(a, a))
 
+def startsWith[A](s: Stream[A], s2: Stream[A]): Boolean =
+  s.zipAll(s2).forAll {
+    case (h1, h2) =>
+      h1 == h2 || h2 == None
+    }
+
 }
 
 def main(args: Array[String]): Unit = {
   val s = Stream(1 to 5: _*)
-  val s2 = Stream(20 to 30: _*)
-  println(s zip s2 toList)
-  println(s zipAll s2 toList)
-//  println(s zipAll2 s2 toList)
+  println(s toList)
+  println(s.scanRight(0)(_ + _) toList)
 }
 }
