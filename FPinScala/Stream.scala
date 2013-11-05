@@ -1,4 +1,4 @@
-object test {
+object StreamTest {
 
 import Stream._
 

@@ -1,5 +1,6 @@
-object trait {
+object EitherTest {
 
+/*
 sealed trait Either[+E, +A] {
   def map[B](f: A => B): Either[E, B]
   def flatMap[EE >: E, B](f: A => Either[EE, B]): Either[EE, B]
@@ -8,6 +9,7 @@ sealed trait Either[+E, +A] {
 }
 case class Left[+E](value: E) extends Either[E, Nothing]
 case class Right[+A](value: A) extends Either[Nothing, A]
+*/
 
 
 }

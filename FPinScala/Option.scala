@@ -1,4 +1,4 @@
-object Option {
+object OptionTest {
 
 sealed trait Option[+A] {
   def map[B](f: A => B): Option[B] = this match {
@@ -23,10 +23,11 @@ sealed trait Option[+A] {
   def map2[A,B,C](a: Option[A], b: Option[B])(f: (A, B) => C): Option[C] =
     a flatMap (aa => b map (bb => f(aa, bb)))
 
+  /*
   def bothMatch_2(pat1: String, pat2: String, s: String): Option[Boolean] =
-    map2(pattern(pat1),
-         pattern(pat2),
-         (p1, p2) => p1.matchers(s).matches && p2.matchers(s).matches)
+    map2(pattern(pat1), pattern(pat2))(
+        (p1, p2) => p1.matchers(s).matches && p2.matchers(s).matches)
+  */
 }
 
 case class Some[+A](get: A) extends Option[A]

@@ -1,6 +1,6 @@
 import scala.annotation.tailrec
 
-object test {
+object ListTest {
 
 sealed trait List[+A]
 
