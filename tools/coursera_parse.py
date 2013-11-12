@@ -1,5 +1,6 @@
 import os
 import re
+import sys
 from BeautifulSoup import BeautifulSoup as BS
 
 
@@ -12,8 +13,8 @@ def esc(txt):
     return txt
 
 
-def parse():
-    soup = BS(open('index').read())
+def parse(filename):
+    soup = BS(open(filename).read())
     for item in soup.findAll('div', 'course-item-list-header'):
         section = esc(item.find('h3').next.next)
         ul = item.nextSibling
@@ -29,7 +30,7 @@ def parse():
             subfix = os.path.basename(href).split('?', 1)[0].split('.')[-1]
             fname = os.path.join(section, '%s.%s' % (title, subfix))
             print '''if [ ! -e "%s" ]; then
-    wget --no-cookies --header "Cookie: $(cat cookies.txt)" '%s' -O '%s'
+    wget --no-cookies --header "Cookie: $(cat cookie)" '%s' -O '%s'
 fi''' % (fname, href, fname)
 
 
@@ -44,4 +45,9 @@ fi''' % (sfname, shref, sfname)
 
             print
 
-parse()
+
+if len(sys.argv) > 1:
+    name = sys.argv[1]
+else:
+    name = 'index'
+parse(name)
