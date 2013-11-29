@@ -19,8 +19,8 @@ def parse(filename):
         section = esc(item.find('h3').next.next)
         ul = item.nextSibling
 
-        print 'echo "downloading %s"' % section
-        print 'mkdir -p %s' % section
+        print('echo "downloading %s"' % section)
+        print('mkdir -p %s' % section)
         for lecture_link in ul.findAll('a', 'lecture-link'):
             links = lecture_link.parent.find('div', 'course-lecture-item-resource').findAll('a')
             title = esc(lecture_link.next)
@@ -29,9 +29,9 @@ def parse(filename):
             href = download_link['href'] 
             subfix = os.path.basename(href).split('?', 1)[0].split('.')[-1]
             fname = os.path.join(section, '%s.%s' % (title, subfix))
-            print '''if [ ! -e "%s" ]; then
+            print('''if [ ! -e "%s" ]; then
     wget --no-cookies --header "Cookie: $(cat cookie)" '%s' -O '%s'
-fi''' % (fname, href, fname)
+fi''' % (fname, href, fname))
 
 
             if len(links) >= 2:
@@ -39,9 +39,9 @@ fi''' % (fname, href, fname)
                 shref = script_link['href']
                 if shref.find('srt') > 0:
                     sfname = os.path.join(section, '%s.srt' % (title))
-                    print '''if [ ! -e "%s" ]; then
-    wget --no-cookies --header "Cookie: $(cat cookies.txt)" '%s' -O '%s'
-fi''' % (sfname, shref, sfname)
+                    print('''if [ ! -e "%s" ]; then
+    wget --no-cookies --header "Cookie: $(cat cookie)" '%s' -O '%s'
+fi''' % (sfname, shref, sfname))
 
             print
 
