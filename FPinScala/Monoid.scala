@@ -1,3 +1,5 @@
+import org.scalacheck.Prop.forAll
+
 object MonoidTest {
 
 trait Monoid[A] {
@@ -54,11 +56,17 @@ object Monoid {
   def concatenate[A](as: List[A], m: Monoid[A]): A =
     as.foldLeft(m.zero)(m.op)
 
+  val monoidLaws[A](m: Monoid[A]): Prop = forAll {
+    (a1: A, a2: A) => m.op(a1, a2) == m.op(a2, a1)
+  } && forAll {
+    (a: A) => m.op(m.zero, a) == m.op(a, m.zero)
+  }
+
   def foldMap[A,B](as: List[A], m: Monoid[B])(f: A => B): B =
     as.foldLeft(m.zero)((z, a) => m.op(z, f(a)))
 
-  def foldLeft[A,B](z: B)(f: (B, A) => B): B => {
-    foldMap(Nil, listMonoid)(
+//  def foldLeft[A,B](z: B)(f: (B, A) => B): B => {
+//    foldMap(Nil, listMonoid)(
     
     
 
