@@ -32,12 +32,14 @@ httpbin.org
 
 ipython
 virtualenv
-virtualenvwrapper
-pythonbrew
+PEW(virtualenvwrapper)
+pyenv(pythonbrew)
 pygments: syntax highlight
 optcomplete
 babel: A collection of tools for internationalizing Python applications
 scons
+
+antigravity
 
 psyco
 
@@ -220,6 +222,7 @@ lunar
 python-dateutil
 python-iso8601: Simple module to parse ISO 8601 dates
 pytz: time zone
+Delorean: Time Travel Made Easy
 
 yaml
 simplejson
@@ -264,3 +267,9 @@ RabbitMQ
 	txAMQP
 	pika
 	python-pika: Pika is a pure-Python implementation of the AMQP 0-9-1 protocol that tries to stay fairly independent of the underlying network support library.
+
+docopt: Command-line interface description language
+sh: sh (previously pbs) is a full-fledged subprocess interface for Python that allows you to call any program as if it were a function
+
+structlog
+watchdog
