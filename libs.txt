@@ -273,3 +273,6 @@ sh: sh (previously pbs) is a full-fledged subprocess interface for Python that a
 
 structlog
 watchdog
+
+ttftree: A 2-3 finger tree library for Python
+six: Six is a Python 2 and 3 compatibility library. 
